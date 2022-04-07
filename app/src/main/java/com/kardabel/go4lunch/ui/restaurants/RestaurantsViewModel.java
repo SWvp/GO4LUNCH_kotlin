@@ -194,7 +194,7 @@ public class RestaurantsViewModel extends ViewModel {
                 String distance = distanceInt + application.getString(R.string.m);
                 String openingHours = getOpeningText(
                         restaurantDetailsResults
-                                .get(i).getDetailsResult()
+                                .get(i).getResult()
                                 .getOpeningHours(), nearbySearchResults
                                 .getResults().get(i)
                                 .isPermanentlyClosed());
@@ -327,7 +327,7 @@ public class RestaurantsViewModel extends ViewModel {
 
         for (Restaurant restaurant : nearbySearchResults.getResults()) {
             for (int i = 0; i < restaurantDetailsResults.size(); i++) {
-                if (restaurantDetailsResults.get(i).getDetailsResult().getPlaceId().equals(restaurant.getRestaurantId())) {
+                if (restaurantDetailsResults.get(i).getResult().getPlaceId().equals(restaurant.getRestaurantId())) {
 
                     int distanceInt = distance(
                             location,
@@ -348,7 +348,7 @@ public class RestaurantsViewModel extends ViewModel {
                     String openingHours = getOpeningText(
                             restaurantDetailsResults
                                     .get(i)
-                                    .getDetailsResult()
+                                    .getResult()
                                     .getOpeningHours(),
                             restaurant
                                     .isPermanentlyClosed());

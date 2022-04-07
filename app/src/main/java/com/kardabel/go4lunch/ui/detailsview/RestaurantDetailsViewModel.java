@@ -28,6 +28,7 @@ import com.kardabel.go4lunch.usecase.GetRestaurantDetailsResultsByIdUseCase;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class RestaurantDetailsViewModel extends ViewModel {
 
@@ -250,15 +251,15 @@ public class RestaurantDetailsViewModel extends ViewModel {
         }
 
         // CHECK IF PHONE NUMBER IS AVAILABLE
-        if (restaurantDetails.getDetailsResult().getFormattedPhoneNumber() != null) {
-            restaurantPhoneNumber = restaurantDetails.getDetailsResult().getFormattedPhoneNumber();
+        if (Objects.requireNonNull(restaurantDetails.getResult()).getFormattedPhoneNumber() != null) {
+            restaurantPhoneNumber = restaurantDetails.getResult().getFormattedPhoneNumber();
         } else {
             restaurantPhoneNumber = application.getString(R.string.phone_number_unavailable);
         }
 
         // CHECK IF WEBSITE ADDRESS IS AVAILABLE
-        if (restaurantDetails.getDetailsResult().getWebsite() != null) {
-            restaurantWebsite = restaurantDetails.getDetailsResult().getWebsite();
+        if (restaurantDetails.getResult().getWebsite() != null) {
+            restaurantWebsite = restaurantDetails.getResult().getWebsite();
         } else {
             restaurantWebsite = application.getString(R.string.website_unavailable);
         }

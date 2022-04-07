@@ -1,39 +1,34 @@
-package com.kardabel.go4lunch.retrofit;
+package com.kardabel.go4lunch.retrofit
 
-import com.kardabel.go4lunch.pojo.NearbySearchResults;
-import com.kardabel.go4lunch.pojo.Predictions;
-import com.kardabel.go4lunch.pojo.RestaurantDetailsResult;
+import retrofit2.http.GET
+import com.kardabel.go4lunch.pojo.NearbySearchResults
+import com.kardabel.go4lunch.pojo.RestaurantDetailsResult
+import com.kardabel.go4lunch.pojo.Predictions
+import retrofit2.Call
+import retrofit2.http.Query
 
-import retrofit2.Call;
-import retrofit2.http.GET;
-import retrofit2.http.Query;
-
-public interface GoogleMapsApi {
-
+interface GoogleMapsApi {
     @GET("maps/api/place/nearbysearch/json")
-    Call<NearbySearchResults> searchRestaurant(
-            @Query("key") String key,
-            @Query("type") String type,
-            @Query("location") String location,
-            @Query("radius") String radius
-    );
+    fun searchRestaurant(
+        @Query("key") key: String?,
+        @Query("type") type: String?,
+        @Query("location") location: String?,
+        @Query("radius") radius: String?
+    ): Call<NearbySearchResults?>?
 
     @GET("maps/api/place/details/json")
-    Call<RestaurantDetailsResult> searchRestaurantDetails(
-            @Query("key") String key,
-            @Query("place_id") String place_id,
-            @Query("fields") String fields
-    );
+    fun searchRestaurantDetails(
+        @Query("key") key: String?,
+        @Query("place_id") place_id: String?,
+        @Query("fields") fields: String?
+    ): Call<RestaurantDetailsResult?>?
 
     @GET("maps/api/place/autocomplete/json")
-    Call<Predictions> autocompleteResult(
-            @Query("key") String key,
-            @Query("type") String type,
-            @Query("location") String location,
-            @Query("radius") String radius,
-            @Query("input") String input
-    );
-
-
-
+    fun autocompleteResult(
+        @Query("key") key: String?,
+        @Query("type") type: String?,
+        @Query("location") location: String?,
+        @Query("radius") radius: String?,
+        @Query("input") input: String?
+    ): Call<Predictions?>?
 }

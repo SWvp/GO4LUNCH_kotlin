@@ -6,5 +6,5 @@ import com.google.gson.annotations.SerializedName
 data class Geometry constructor(
     @SerializedName("location")
     @Expose
-    var mRestaurantLatLngLiteral: RestaurantLatLngLiteral? = null
+    var restaurantLatLngLiteral: RestaurantLatLngLiteral? = null
 )
