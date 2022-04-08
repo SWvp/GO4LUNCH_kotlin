@@ -1,220 +1,199 @@
-package com.kardabel.go4lunch.ui.mapview;
+package com.kardabel.go4lunch.ui.mapview
 
-import android.location.Location;
+import android.location.Location
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.ViewModel
+import com.google.android.gms.maps.model.LatLng
+import com.kardabel.go4lunch.model.UserWhoMadeRestaurantChoice
+import com.kardabel.go4lunch.pojo.NearbySearchResults
+import com.kardabel.go4lunch.repository.LocationRepository
+import com.kardabel.go4lunch.repository.UserSearchRepository
+import com.kardabel.go4lunch.repository.UsersWhoMadeRestaurantChoiceRepository
+import com.kardabel.go4lunch.usecase.GetNearbySearchResultsUseCase
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MediatorLiveData;
-import androidx.lifecycle.ViewModel;
+class MapViewModel(
+    locationRepository: LocationRepository,
+    getNearbySearchResultsUseCase: GetNearbySearchResultsUseCase,
+    usersWhoMadeRestaurantChoiceRepository: UsersWhoMadeRestaurantChoiceRepository,
+    userSearchRepository: UserSearchRepository
+) : ViewModel() {
 
-import com.google.android.gms.maps.model.LatLng;
-import com.kardabel.go4lunch.model.UserWhoMadeRestaurantChoice;
-import com.kardabel.go4lunch.pojo.NearbySearchResults;
-import com.kardabel.go4lunch.repository.LocationRepository;
-import com.kardabel.go4lunch.repository.UserSearchRepository;
-import com.kardabel.go4lunch.repository.UsersWhoMadeRestaurantChoiceRepository;
-import com.kardabel.go4lunch.usecase.GetNearbySearchResultsUseCase;
-
-import java.util.ArrayList;
-import java.util.List;
-
-public class MapViewModel extends ViewModel {
-
-    public static final float ZOOM_FOCUS = 15F;
-
-    private final MediatorLiveData<MapViewState> mapViewStatePoiMediatorLiveData = new MediatorLiveData<>();
-
-    public MapViewModel(@NonNull LocationRepository locationRepository,
-                        @NonNull GetNearbySearchResultsUseCase getNearbySearchResultsUseCase,
-                        @NonNull UsersWhoMadeRestaurantChoiceRepository usersWhoMadeRestaurantChoiceRepository,
-                        @NonNull UserSearchRepository userSearchRepository) {
-
-        LiveData<Location> locationLiveData =
-                locationRepository.getLocationLiveData();
-        LiveData<NearbySearchResults> nearbySearchResultsLiveData =
-                getNearbySearchResultsUseCase.invoke();
-        LiveData<List<UserWhoMadeRestaurantChoice>> workmatesWhoMadeRestaurantChoiceLiveData =
-                usersWhoMadeRestaurantChoiceRepository.getWorkmatesWhoMadeRestaurantChoice();
-        LiveData<String> usersSearchLiveData =
-                userSearchRepository.getUsersSearchLiveData();
-
-        // OBSERVERS
-        mapViewStatePoiMediatorLiveData.addSource(locationLiveData, location -> combine(
-                nearbySearchResultsLiveData.getValue(),
-                location,
-                workmatesWhoMadeRestaurantChoiceLiveData.getValue(),
-                usersSearchLiveData.getValue()));
-        mapViewStatePoiMediatorLiveData.addSource(nearbySearchResultsLiveData, nearbySearchResults -> combine(
-                nearbySearchResults,
-                locationLiveData.getValue(),
-                workmatesWhoMadeRestaurantChoiceLiveData.getValue(),
-                usersSearchLiveData.getValue()));
-        mapViewStatePoiMediatorLiveData.addSource(workmatesWhoMadeRestaurantChoiceLiveData, userWithFavoriteRestaurants -> combine(
-                nearbySearchResultsLiveData.getValue(),
-                locationLiveData.getValue(),
-                userWithFavoriteRestaurants,
-                usersSearchLiveData.getValue()));
-        mapViewStatePoiMediatorLiveData.addSource(usersSearchLiveData, usersSearch -> combine(
-                nearbySearchResultsLiveData.getValue(),
-                locationLiveData.getValue(),
-                workmatesWhoMadeRestaurantChoiceLiveData.getValue(),
-                usersSearch));
-
+    companion object {
+        private const val ZOOM_FOCUS = 15f
     }
 
-    private void combine(@Nullable NearbySearchResults nearbySearchResults,
-                         @Nullable Location location,
-                         @Nullable List<UserWhoMadeRestaurantChoice> userWhoMadeRestaurantChoice,
-                         @Nullable String usersSearch) {
-        if (usersSearch != null && usersSearch.length() > 0) {
-            mapViewStatePoiMediatorLiveData.setValue(mapUsersSearch(
-                    nearbySearchResults,
-                    location,
-                    userWhoMadeRestaurantChoice,
-                    usersSearch));
+    private var locationLiveData: LiveData<Location> = locationRepository.locationLiveData
+    private var nearbySearchResultsLiveData: LiveData<NearbySearchResults> = getNearbySearchResultsUseCase.invoke()
+    private var workmatesWhoMadeRestaurantChoiceLiveData: LiveData<MutableList<UserWhoMadeRestaurantChoice>> = usersWhoMadeRestaurantChoiceRepository.workmatesWhoMadeRestaurantChoice
+    private var usersSearchLiveData: LiveData<String> = userSearchRepository.usersSearchLiveData
 
+    private val mapViewStatePoiMediatorLiveData = MediatorLiveData<MapViewState>().apply {
+        addSource(locationLiveData) { location ->
+            combine(
+                location,
+                nearbySearchResultsLiveData.value,
+                workmatesWhoMadeRestaurantChoiceLiveData.value,
+                usersSearchLiveData.value
+            )
+        }
+        addSource(nearbySearchResultsLiveData) { nearbySearchResults ->
+            combine(
+                locationLiveData.value,
+                nearbySearchResults,
+                workmatesWhoMadeRestaurantChoiceLiveData.value,
+                usersSearchLiveData.value
+            )
+        }
+        addSource(workmatesWhoMadeRestaurantChoiceLiveData) { userWithFavoriteRestaurants ->
+            combine(
+                locationLiveData.value,
+                nearbySearchResultsLiveData.value,
+                userWithFavoriteRestaurants,
+                usersSearchLiveData.value
+            )
+        }
+        addSource(usersSearchLiveData) { usersSearch ->
+            combine(
+                locationLiveData.value,
+                nearbySearchResultsLiveData.value,
+                workmatesWhoMadeRestaurantChoiceLiveData.value,
+                usersSearch
+            )
+        }
+    }
+
+    private fun combine(
+        location: Location?,
+        nearbySearchResults: NearbySearchResults?,
+        userWhoMadeRestaurantChoice: List<UserWhoMadeRestaurantChoice>?,
+        usersSearch: String?
+    ) {
+        if (usersSearch != null && usersSearch.isNotEmpty()) {
+            mapViewStatePoiMediatorLiveData.value = mapUsersSearch(
+                location,
+                nearbySearchResults,
+                userWhoMadeRestaurantChoice,
+                usersSearch
+            )
         } else if (nearbySearchResults != null && location != null) {
-            mapViewStatePoiMediatorLiveData.setValue(map(
-                    nearbySearchResults,
-                    location,
-                    userWhoMadeRestaurantChoice));
+            mapViewStatePoiMediatorLiveData.value = map(
+                location,
+                nearbySearchResults,
+                userWhoMadeRestaurantChoice
+            )
         }
     }
 
     // MAP WITH USER'S SEARCH ONLY
-    private MapViewState mapUsersSearch(
-            NearbySearchResults nearbySearchResults,
-            Location location,
-            List<UserWhoMadeRestaurantChoice> userWhoMadeRestaurantChoice,
-            String usersSearch
-    ) {
-        List<Poi> poiList = new ArrayList<>();
-        List<String> restaurantAsFavoriteId = new ArrayList<>();
+    private fun mapUsersSearch(
+        location: Location?,
+        nearbySearchResults: NearbySearchResults?,
+        userWhoMadeRestaurantChoice: List<UserWhoMadeRestaurantChoice>?,
+        usersSearch: String
+    ): MapViewState {
 
+        val poiList = mutableListOf<Poi>()
+        val restaurantAsFavoriteId = mutableListOf<String>()
+
+        // Add id from restaurant who as been set as favorite
         if (userWhoMadeRestaurantChoice != null) {
-            for (int i = 0; i < userWhoMadeRestaurantChoice.size(); i++) {
-                restaurantAsFavoriteId.add(userWhoMadeRestaurantChoice.get(i).getRestaurantId());
-
+            for (i in userWhoMadeRestaurantChoice.indices) {
+                restaurantAsFavoriteId.add(userWhoMadeRestaurantChoice[i].restaurantId!!)
             }
         }
 
-        for (int i = 0; i < nearbySearchResults.getResults().size(); i++) {
-            if (nearbySearchResults.getResults().get(i).getRestaurantName().contains(usersSearch)) {
-                boolean isFavorite = false;
-                String poiName = nearbySearchResults.getResults().get(i).getRestaurantName();
-                String poiPlaceId = nearbySearchResults.getResults().get(i).getRestaurantId();
-                String poiAddress = nearbySearchResults.getResults().get(i).getRestaurantAddress();
-                LatLng latLng = new LatLng(
-                        nearbySearchResults
-                                .getResults()
-                                .get(i)
-                                .getRestaurantGeometry()
-                                .getRestaurantLatLngLiteral()
-                                .getLat(),
-                        nearbySearchResults
-                                .getResults()
-                                .get(i)
-                                .getRestaurantGeometry()
-                                .getRestaurantLatLngLiteral()
-                                .getLng());
-                if (
-                        userWhoMadeRestaurantChoice != null
-                                && restaurantAsFavoriteId.contains(poiPlaceId)) {
-                    isFavorite = true;
-                }
-
-                poiList.add(
-                        new Poi(
-                                poiName,
-                                poiPlaceId,
-                                poiAddress,
-                                latLng,
-                                isFavorite
-                        )
-                );
+        for (i in nearbySearchResults!!.results!!.indices) {
+            if (nearbySearchResults.results!![i].restaurantName!!.contains(usersSearch)) {
+                poiList.add(poi(nearbySearchResults, i, userWhoMadeRestaurantChoice, restaurantAsFavoriteId))
             }
         }
+        val userLocation = LatLng(
+            location!!.latitude,
+            location.longitude
+        )
 
-        LatLng userLocation = new LatLng(
-                location.getLatitude(),
-                location.getLongitude());
-
-        return new MapViewState(
-                poiList,
-                new LatLng(
-                        userLocation.latitude,
-                        userLocation.longitude),
-                ZOOM_FOCUS);
-
+        return MapViewState(
+            poiList,
+            LatLng(
+                userLocation.latitude,
+                userLocation.longitude
+            ),
+            Companion.ZOOM_FOCUS
+        )
     }
 
-    private MapViewState map(
-            NearbySearchResults nearbySearchResults,
-            Location location,
-            List<UserWhoMadeRestaurantChoice> userWhoMadeRestaurantChoice) {
+    private fun map(
+        location: Location?,
+        nearbySearchResults: NearbySearchResults?,
+        userWhoMadeRestaurantChoice: List<UserWhoMadeRestaurantChoice>?,
+    ): MapViewState {
 
-        List<Poi> poiList = new ArrayList<>();
-        List<String> restaurantWithWorkmate = new ArrayList<>();
+        val poiList = mutableListOf<Poi>()
+        val restaurantAsFavoriteId = mutableListOf<String>()
 
+        // Add id from restaurant who as been set as favorite
         if (userWhoMadeRestaurantChoice != null) {
-            for (int i = 0; i < userWhoMadeRestaurantChoice.size(); i++) {
-                restaurantWithWorkmate.add(userWhoMadeRestaurantChoice.get(i).getRestaurantId());
-
+            for (i in userWhoMadeRestaurantChoice.indices) {
+                restaurantAsFavoriteId.add(userWhoMadeRestaurantChoice[i].restaurantId!!)
             }
         }
 
-        for (int i = 0; i < nearbySearchResults.getResults().size(); i++) {
-            boolean isFavorite = false;
-            String poiName = nearbySearchResults.getResults().get(i).getRestaurantName();
-            String poiPlaceId = nearbySearchResults.getResults().get(i).getRestaurantId();
-            String poiAddress = nearbySearchResults.getResults().get(i).getRestaurantAddress();
-            LatLng latLng = new LatLng(
-                    nearbySearchResults
-                            .getResults()
-                            .get(i)
-                            .getRestaurantGeometry()
-                            .getRestaurantLatLngLiteral()
-                            .getLat(),
-                    nearbySearchResults
-                            .getResults()
-                            .get(i)
-                            .getRestaurantGeometry()
-                            .getRestaurantLatLngLiteral()
-                            .getLng());
-            if (
-                    userWhoMadeRestaurantChoice != null
-                            && restaurantWithWorkmate.contains(poiPlaceId)) {
-                isFavorite = true;
-            }
-
-            poiList.add(
-                    new Poi(
-                            poiName,
-                            poiPlaceId,
-                            poiAddress,
-                            latLng,
-                            isFavorite
-                    )
-            );
-
+        for (i in nearbySearchResults!!.results!!.indices) {
+            poiList.add(poi(nearbySearchResults, i, userWhoMadeRestaurantChoice, restaurantAsFavoriteId))
         }
 
-        LatLng userLocation = new LatLng(
-                location.getLatitude(),
-                location.getLongitude());
+        val userLocation = LatLng(
+            location!!.latitude,
+            location.longitude
+        )
 
-        return new MapViewState(
-                poiList,
-                new LatLng(
-                        userLocation.latitude,
-                        userLocation.longitude),
-                ZOOM_FOCUS);
+        return MapViewState(
+            poiList,
+            LatLng(
+                userLocation.latitude,
+                userLocation.longitude
+            ),
+            ZOOM_FOCUS
+        )
+    }
 
+    private fun poi(
+        nearbySearchResults: NearbySearchResults,
+        i: Int,
+        userWhoMadeRestaurantChoice: List<UserWhoMadeRestaurantChoice>?,
+        restaurantAsFavoriteId : List<String>
+    ): Poi {
+        var isFavorite = false
+        val poiName = nearbySearchResults.results!![i].restaurantName
+        val poiPlaceId = nearbySearchResults.results!![i].restaurantId
+        val poiAddress = nearbySearchResults.results!![i].restaurantAddress
+        val latLng = LatLng(
+            nearbySearchResults
+                .results!![i]
+                .restaurantGeometry?.restaurantLatLngLiteral?.lat!!,
+            nearbySearchResults
+                .results!![i]
+                .restaurantGeometry?.restaurantLatLngLiteral?.lng!!
+        )
+
+        if (userWhoMadeRestaurantChoice != null
+            && restaurantAsFavoriteId.contains(poiPlaceId)
+        ) {
+            isFavorite = true
+        }
+
+        return  Poi(
+            poiName,
+            poiPlaceId,
+            poiAddress,
+            latLng,
+            isFavorite
+        )
     }
 
     // LIVEDATA OBSERVED BY MAP FRAGMENT
-    public LiveData<MapViewState> getMapViewStateLiveData() {
-        return mapViewStatePoiMediatorLiveData;
+    fun getMapViewStateLiveData(): LiveData<MapViewState?> {
+        return mapViewStatePoiMediatorLiveData
     }
 }
