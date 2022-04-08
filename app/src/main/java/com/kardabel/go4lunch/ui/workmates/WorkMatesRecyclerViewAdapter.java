@@ -58,7 +58,7 @@ public class WorkMatesRecyclerViewAdapter extends RecyclerView.Adapter<WorkMates
                 .circleCrop()
                 .into(holder.viewHolderBinding.itemWorkmateAvatar);
         // TODO : if there is a solution to pass styleRes to avoid "if" in view
-        if (!workMate.isUserHasDecided()) {
+        if (!workMate.getGotRestaurant()) {
             holder
                     .viewHolderBinding
                     .itemWorkmateDescription

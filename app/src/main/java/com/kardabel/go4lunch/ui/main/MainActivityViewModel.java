@@ -1,4 +1,4 @@
-package com.kardabel.go4lunch;
+package com.kardabel.go4lunch.ui.main;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 
@@ -13,6 +13,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.kardabel.go4lunch.R;
 import com.kardabel.go4lunch.model.UserWhoMadeRestaurantChoice;
 import com.kardabel.go4lunch.pojo.Prediction;
 import com.kardabel.go4lunch.pojo.Predictions;

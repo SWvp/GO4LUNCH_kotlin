@@ -1,4 +1,4 @@
-package com.kardabel.go4lunch;
+package com.kardabel.go4lunch.ui.main;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 
@@ -40,6 +40,8 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.kardabel.go4lunch.AuthenticationActivity;
+import com.kardabel.go4lunch.R;
 import com.kardabel.go4lunch.databinding.MainActivityBinding;
 import com.kardabel.go4lunch.di.ViewModelFactory;
 import com.kardabel.go4lunch.ui.autocomplete.PredictionViewState;

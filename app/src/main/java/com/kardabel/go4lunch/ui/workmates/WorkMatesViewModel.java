@@ -1,5 +1,6 @@
 package com.kardabel.go4lunch.ui.workmates;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 import android.graphics.Color;
 
@@ -11,12 +12,11 @@ import androidx.lifecycle.ViewModel;
 import com.kardabel.go4lunch.R;
 import com.kardabel.go4lunch.model.UserModel;
 import com.kardabel.go4lunch.model.UserWhoMadeRestaurantChoice;
-import com.kardabel.go4lunch.repository.WorkmatesRepository;
 import com.kardabel.go4lunch.repository.UsersWhoMadeRestaurantChoiceRepository;
+import com.kardabel.go4lunch.repository.WorkmatesRepository;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 public class WorkMatesViewModel extends ViewModel {
@@ -69,6 +69,7 @@ public class WorkMatesViewModel extends ViewModel {
     }
 
     // MAP TO WORKMATE VIEW STATE
+    @SuppressLint("ResourceType")
     private List<WorkMateViewState> mapWorkmates(List<UserModel> workmates,
                                                  List<UserWhoMadeRestaurantChoice> workmatesWhoMadeRestaurantChoices) {
 
@@ -79,6 +80,7 @@ public class WorkMatesViewModel extends ViewModel {
             String workmateName = workmates.get(i).getUserName();
             String avatar = workmates.get(i).getAvatarURL();
             String workmateId = workmates.get(i).getUid();
+            assert workmateId != null;
             String workmateChoice = workmateChoice(workmateId, workmatesWhoMadeRestaurantChoices);
 
             int colorText = Color.GRAY;
@@ -98,7 +100,7 @@ public class WorkMatesViewModel extends ViewModel {
         }
 
         // SORT THE LIST BY BOOLEAN, IF TRUE, APPEARS AT THE TOP OF THE LIST
-        Collections.sort(workMateViewStateList, (o1, o2) -> Boolean.compare(!o1.isUserHasDecided(), !o2.isUserHasDecided()));
+        Collections.sort(workMateViewStateList, (o1, o2) -> Boolean.compare(!o1.getGotRestaurant(), !o2.getGotRestaurant()));
         return workMateViewStateList;
 
     }

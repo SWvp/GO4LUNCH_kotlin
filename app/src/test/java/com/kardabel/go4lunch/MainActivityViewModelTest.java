@@ -17,6 +17,8 @@ import com.kardabel.go4lunch.repository.UserSearchRepository;
 import com.kardabel.go4lunch.repository.UsersWhoMadeRestaurantChoiceRepository;
 import com.kardabel.go4lunch.testutil.LiveDataTestUtils;
 import com.kardabel.go4lunch.ui.autocomplete.PredictionViewState;
+import com.kardabel.go4lunch.ui.main.MainActivityViewModel;
+import com.kardabel.go4lunch.ui.main.MainActivityYourLunchViewState;
 import com.kardabel.go4lunch.usecase.GetCurrentUserIdUseCase;
 import com.kardabel.go4lunch.usecase.GetPredictionsUseCase;
 

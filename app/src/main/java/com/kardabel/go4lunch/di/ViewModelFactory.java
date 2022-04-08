@@ -9,7 +9,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.kardabel.go4lunch.MainActivityViewModel;
+import com.kardabel.go4lunch.ui.main.MainActivityViewModel;
 import com.kardabel.go4lunch.MainApplication;
 import com.kardabel.go4lunch.repository.AutocompleteRepository;
 import com.kardabel.go4lunch.repository.ChatMessageRepository;

@@ -17,6 +17,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.kardabel.go4lunch.databinding.AuthenticationBinding;
 import com.kardabel.go4lunch.model.UserModel;
+import com.kardabel.go4lunch.ui.main.MainActivity;
 import com.kardabel.go4lunch.usecase.GetCurrentUserUseCase;
 
 import java.util.Arrays;
