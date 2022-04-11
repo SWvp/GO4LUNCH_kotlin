@@ -166,7 +166,7 @@ public class MainActivity extends AppCompatActivity implements
         mainActivityViewModel.getUserRestaurantChoice();
 
         mainActivityViewModel
-                .getCurrentUserRestaurantChoice()
+                .getMainActivityYourLunchViewStateMediatorLiveData()
                 .observe(this, mainActivityYourLunchViewState -> {
             restaurantId = mainActivityYourLunchViewState.getRestaurantId();
             currentUserRestaurantChoiceStatus =
@@ -261,7 +261,7 @@ public class MainActivity extends AppCompatActivity implements
         recyclerView.setAdapter(adapter);
 
         mainActivityViewModel
-                .getPredictionsLiveData()
+                .getPredictionsMediatorLiveData()
                 .observe(this, predictions -> adapter.submitList(predictions));
     }
 
