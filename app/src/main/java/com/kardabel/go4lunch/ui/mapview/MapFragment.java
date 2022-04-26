@@ -41,7 +41,7 @@ public class MapFragment extends SupportMapFragment implements OnMapReadyCallbac
             MapViewModel mapViewModel =
                     new ViewModelProvider(this, listViewModelFactory).get(MapViewModel.class);
 
-            mapViewModel.getMapViewStateLiveData().observe(this, mapViewState -> {
+            mapViewModel.getMapViewStatePoiMediatorLiveData().observe(this, mapViewState -> {
                 googleMap.clear();
 
                 // MOVE THE CAMERA TO THE USER LOCATION
@@ -65,7 +65,7 @@ public class MapFragment extends SupportMapFragment implements OnMapReadyCallbac
                 // SET EVERY POI ON THE MAP
                 for (Poi poi : mapViewState.getPoiList()) {
                     Marker marker;
-                    if(poi.getIsFavorite()){
+                    if(poi.isFavorite()){
                         marker = googleMap.addMarker(new MarkerOptions()
                                 .position(poi.getPoiLatLng())
                                 .title(poi.getPoiName())

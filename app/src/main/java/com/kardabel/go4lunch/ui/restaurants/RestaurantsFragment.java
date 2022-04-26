@@ -52,7 +52,7 @@ public class RestaurantsFragment extends Fragment {
                         .get(RestaurantsViewModel.class);
 
         // CONFIGURE RECYCLERVIEW WHEN OBSERVER IS TRIGGER
-        restaurantsViewModel.getRestaurantsViewStateLiveData()
+        restaurantsViewModel.getGetRestaurantsWrapperViewStateMediatorLiveData()
                 .observe(getViewLifecycleOwner(), restaurantsWrapperViewState -> adapter.setRestaurantListData(restaurantsWrapperViewState.getItemRestaurant()));
 
         // ON ITEM CLICK, GO TO DETAILS

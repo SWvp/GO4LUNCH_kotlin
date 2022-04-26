@@ -12,7 +12,7 @@ import com.kardabel.go4lunch.repository.UserSearchRepository
 import com.kardabel.go4lunch.repository.UsersWhoMadeRestaurantChoiceRepository
 import com.kardabel.go4lunch.usecase.GetNearbySearchResultsUseCase
 
-class MapViewModel(
+class MapViewModel constructor(
     locationRepository: LocationRepository,
     getNearbySearchResultsUseCase: GetNearbySearchResultsUseCase,
     usersWhoMadeRestaurantChoiceRepository: UsersWhoMadeRestaurantChoiceRepository,
@@ -28,7 +28,7 @@ class MapViewModel(
     private var workmatesWhoMadeRestaurantChoiceLiveData: LiveData<MutableList<UserWhoMadeRestaurantChoice>> = usersWhoMadeRestaurantChoiceRepository.workmatesWhoMadeRestaurantChoice
     private var usersSearchLiveData: LiveData<String> = userSearchRepository.usersSearchLiveData
 
-    private val mapViewStatePoiMediatorLiveData = MediatorLiveData<MapViewState>().apply {
+    val mapViewStatePoiMediatorLiveData = MediatorLiveData<MapViewState>().apply {
         addSource(locationLiveData) { location ->
             combine(
                 location,
@@ -190,10 +190,5 @@ class MapViewModel(
             latLng,
             isFavorite
         )
-    }
-
-    // LIVEDATA OBSERVED BY MAP FRAGMENT
-    fun getMapViewStateLiveData(): LiveData<MapViewState?> {
-        return mapViewStatePoiMediatorLiveData
     }
 }
