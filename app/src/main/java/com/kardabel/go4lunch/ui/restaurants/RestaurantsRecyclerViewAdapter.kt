@@ -45,7 +45,7 @@ class RestaurantsRecyclerViewAdapter(
             restaurantName.text = restaurantsViewState.name
             restaurantAddress.text = restaurantsViewState.address
             restaurantOpeningHours.text = restaurantsViewState.openingHours
-            //restaurantOpeningHours.setTextColor(restaurantsViewState.textColor)
+            restaurantOpeningHours.setTextColor(restaurantsViewState.textColor)
             restaurantDistanceTo.text = restaurantsViewState.distanceText
             restaurantRating.rating = restaurantsViewState.rating.toFloat()
             interestedWorkmates.text = restaurantsViewState.usersWhoChoseThisRestaurant

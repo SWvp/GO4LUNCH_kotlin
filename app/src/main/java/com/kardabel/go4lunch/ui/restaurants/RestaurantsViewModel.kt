@@ -139,7 +139,7 @@ class RestaurantsViewModel constructor(
 
         val restaurantList = mutableListOf<RestaurantsViewState>()
 
-        for (i in 1..nearbySearchResults.results!!.size) {
+        for (i in 0 until nearbySearchResults.results!!.size) {
 
             if (nearbySearchResults.results!![i].restaurantName!!.contains(usersSearch)) {
 

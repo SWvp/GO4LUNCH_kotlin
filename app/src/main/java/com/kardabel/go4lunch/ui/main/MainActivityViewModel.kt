@@ -85,9 +85,9 @@ class MainActivityViewModel constructor(
         for ((description, structuredFormatting, placeId) in predictions.predictions!!) {
             predictionsList.add(
                 PredictionViewState(
-                    description,
-                    placeId,
-                    structuredFormatting!!.name
+                    description!!,
+                    placeId!!,
+                    structuredFormatting!!.name!!
                 )
             )
         }
