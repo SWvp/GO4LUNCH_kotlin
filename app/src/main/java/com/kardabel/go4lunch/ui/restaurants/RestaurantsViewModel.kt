@@ -249,9 +249,9 @@ class RestaurantsViewModel constructor(
             for (i in restaurantDetailsResults.indices) {
                 if (restaurantDetailsResults[i].result!!.placeId.equals(restaurant.restaurantId)) {
 
-                    val distanceInt = distance(location, nearbySearchResults.results!![i])
-                    val name = nearbySearchResults.results!![i].restaurantName
-                    val address = nearbySearchResults.results!![i].restaurantAddress
+                    val distanceInt = distance(location, restaurant)
+                    val name = restaurant.restaurantName
+                    val address = restaurant.restaurantAddress
                     val photo = restaurant.restaurantPhotos?.let { photoList ->
                         photoReference(
                             photoList
@@ -260,7 +260,7 @@ class RestaurantsViewModel constructor(
                     val distance: String = distanceInt.toString() + application.getString(R.string.m)
                     val openingHours =
                         getOpeningHours(restaurantDetailsResults[i].result!!.openingHours, restaurant.isPermanentlyClosed)
-                    val rating: Double = convertRatingStars(nearbySearchResults.results!![i].rating)
+                    val rating: Double = convertRatingStars(restaurant.rating)
                     val restaurantId = restaurant.restaurantId
                     val usersWhoChoseThisRestaurant: String =
                         usersWhoChoseThisRestaurant(restaurantId, userWhoMadeRestaurantChoice)

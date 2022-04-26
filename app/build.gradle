@@ -21,8 +21,8 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
-        buildConfigField 'String', 'GOOGLE_PLACES_KEY', '"AIzaSyASyYHcFc_BTB-omhZGviy4d3QonaBmcq8"'
-        resValue 'string', 'google_map_key', '"AIzaSyASyYHcFc_BTB-omhZGviy4d3QonaBmcq8"'
+        buildConfigField 'String', 'GOOGLE_PLACES_KEY', OC_P7_Google_Maps_Sdk_key
+        resValue 'string', 'google_map_key', OC_P7_Google_Maps_Sdk_key
     }
 
 
@@ -73,17 +73,22 @@ dependencies {
 
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
 
-    implementation 'androidx.appcompat:appcompat:1.3.1'
-    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.3.1'
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1'
-    implementation 'androidx.navigation:navigation-fragment:2.3.5'
-    implementation 'androidx.navigation:navigation-ui:2.3.5'
+    implementation 'androidx.appcompat:appcompat:1.4.1'
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.4.1'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1'
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.4.2'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.4.2'
+
+    // Lifecycle components
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.4.1"
+    implementation "androidx.lifecycle:lifecycle-common-java8:2.4.1"
 
     // GRAPHICS
     implementation 'com.google.android.material:material:1.5.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.3'
     implementation 'androidx.vectordrawable:vectordrawable:1.1.0'
-    implementation 'com.github.bumptech.glide:glide:4.12.0'
+    implementation 'com.github.bumptech.glide:glide:4.13.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.12.0'
 
     // FIREBASE
@@ -91,7 +96,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics'
     implementation 'com.firebaseui:firebase-ui-auth:8.0.0'
     implementation 'com.google.firebase:firebase-auth:21.0.3'
-    implementation 'com.google.firebase:firebase-firestore:24.1.0'
+    implementation 'com.google.firebase:firebase-firestore:24.1.1'
     implementation 'com.google.firebase:firebase-messaging'
 
     // FIRESTORE
