@@ -1,74 +1,71 @@
-package com.kardabel.go4lunch.ui.workmates;
+package com.kardabel.go4lunch.ui.workmates
 
-import android.content.Context;
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.kardabel.go4lunch.databinding.RecyclerviewWorkmatesBinding
+import com.kardabel.go4lunch.di.ViewModelFactory
+import com.kardabel.go4lunch.ui.chat.ChatActivity
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+class WorkMatesFragment : Fragment() {
 
-import com.kardabel.go4lunch.databinding.RecyclerviewWorkmatesBinding;
-import com.kardabel.go4lunch.di.ViewModelFactory;
-import com.kardabel.go4lunch.ui.chat.ChatActivity;
+    private var _binding: RecyclerviewWorkmatesBinding? = null
+    private val binding get() = _binding!!
 
-public class WorkMatesFragment extends Fragment {
-
-    private RecyclerviewWorkmatesBinding binding;
-
-    public View onCreateView(
-            @NonNull LayoutInflater inflater,
-            ViewGroup container,
-            Bundle savedInstanceState) {
-        binding = RecyclerviewWorkmatesBinding.inflate(inflater, container, false);
-        return binding.getRoot();
-
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?,
+    ): View {
+        _binding = RecyclerviewWorkmatesBinding.inflate(
+            inflater,
+            container,
+            false
+        )
+        return binding.root
     }
 
-    @Override
-    public void onViewCreated(
-            @NonNull View view,
-            @Nullable Bundle savedInstanceState) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        super.onViewCreated(view, savedInstanceState);
-        Context context = view.getContext();
-
-        // INJECTION OF WORKMATES VIEWMODEL
-        ViewModelFactory workmatesViewModelFactory = ViewModelFactory.getInstance();
-        WorkMatesViewModel workMatesViewModel =
-                new ViewModelProvider(this, workmatesViewModelFactory)
-                        .get(WorkMatesViewModel.class);
+        // INIT RESTAURANT VIEWMODEL
+        val workmatesViewModelFactory = ViewModelFactory.getInstance()
+        val workMatesViewModel =
+            ViewModelProvider(this, workmatesViewModelFactory)[WorkMatesViewModel::class.java]
 
         // CONFIGURE RECYCLERVIEW
-        WorkMatesRecyclerViewAdapter adapter = new WorkMatesRecyclerViewAdapter();
-        binding.workmateRecyclerView.setAdapter(adapter);
+        val adapter = WorkMatesRecyclerViewAdapter()
+        binding.workmateRecyclerView.adapter = adapter
         binding.workmateRecyclerView.addItemDecoration(
-                new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL));
-        binding.workmateRecyclerView.setLayoutManager(
-                new LinearLayoutManager(context, RecyclerView.VERTICAL, false));
+            DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL))
+        binding.workmateRecyclerView.layoutManager =
+            LinearLayoutManager(context, RecyclerView.VERTICAL, false)
 
-        workMatesViewModel.getWorkMatesViewStateMediatorLiveData().observe(getViewLifecycleOwner(),
-                adapter::setWorkmatesListData);
+        workMatesViewModel.workMatesViewStateMediatorLiveData.observe(viewLifecycleOwner) { workmatesList ->
+            adapter.setWorkmatesListData(workmatesList)
+        }
 
-        adapter.setOnItemClickListener(workMatesViewState -> startActivity(
+        adapter.setOnItemClickListener { (workmateName, _, workmatePhoto, workmateId) ->
+            startActivity(
                 ChatActivity.navigate(
-                        requireContext(),
-                        workMatesViewState.getWorkmateId(),
-                        workMatesViewState.getWorkmateName(),
-                        workMatesViewState.getWorkmatePhoto())));
+                    requireContext(),
+                    workmateId,
+                    workmateName,
+                    workmatePhoto)
+            )
+        }
 
     }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
-
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
+
 }
