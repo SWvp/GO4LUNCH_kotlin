@@ -23,7 +23,9 @@ import com.kardabel.go4lunch.util.SvgToBitmapConverter;
 
 public class MapFragment extends SupportMapFragment implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
 
-    public MapFragment()  { getMapAsync(this); }
+    public MapFragment() {
+        getMapAsync(this);
+    }
 
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
@@ -37,9 +39,9 @@ public class MapFragment extends SupportMapFragment implements OnMapReadyCallbac
                         Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
 
             // CONFIGURE MAPVIEWMODEL
-            ViewModelFactory listViewModelFactory = ViewModelFactory.getInstance();
+            ViewModelFactory mapViewModelFactory = ViewModelFactory.getInstance();
             MapViewModel mapViewModel =
-                    new ViewModelProvider(this, listViewModelFactory).get(MapViewModel.class);
+                    new ViewModelProvider(this, mapViewModelFactory).get(MapViewModel.class);
 
             mapViewModel.getMapViewStatePoiMediatorLiveData().observe(this, mapViewState -> {
                 googleMap.clear();
@@ -65,7 +67,7 @@ public class MapFragment extends SupportMapFragment implements OnMapReadyCallbac
                 // SET EVERY POI ON THE MAP
                 for (Poi poi : mapViewState.getPoiList()) {
                     Marker marker;
-                    if(poi.isFavorite()){
+                    if (poi.isFavorite()) {
                         marker = googleMap.addMarker(new MarkerOptions()
                                 .position(poi.getPoiLatLng())
                                 .title(poi.getPoiName())
@@ -75,7 +77,7 @@ public class MapFragment extends SupportMapFragment implements OnMapReadyCallbac
                                                 .getBitmapFromVectorDrawable(requireContext(),
                                                         R.drawable.restaurant_poi_icon_green))));
                         // SET TAG TO RETRIEVE THE MARKER IN onMarkerClick METHOD
-                    }else{
+                    } else {
                         marker = googleMap.addMarker(new MarkerOptions()
                                 .position(poi.getPoiLatLng())
                                 .title(poi.getPoiName())

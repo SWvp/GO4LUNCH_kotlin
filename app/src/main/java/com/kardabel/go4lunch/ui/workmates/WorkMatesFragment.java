@@ -53,7 +53,7 @@ public class WorkMatesFragment extends Fragment {
         binding.workmateRecyclerView.setLayoutManager(
                 new LinearLayoutManager(context, RecyclerView.VERTICAL, false));
 
-        workMatesViewModel.getWorkmatesViewStateLiveData().observe(getViewLifecycleOwner(),
+        workMatesViewModel.getWorkMatesViewStateMediatorLiveData().observe(getViewLifecycleOwner(),
                 adapter::setWorkmatesListData);
 
         adapter.setOnItemClickListener(workMatesViewState -> startActivity(
