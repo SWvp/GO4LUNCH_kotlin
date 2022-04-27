@@ -1,18 +1,17 @@
 package com.kardabel.go4lunch.ui.workmates
 
-import com.kardabel.go4lunch.repository.WorkmatesRepository
-import com.kardabel.go4lunch.repository.UsersWhoMadeRestaurantChoiceRepository
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.MediatorLiveData
-import com.kardabel.go4lunch.model.UserModel
-import com.kardabel.go4lunch.model.UserWhoMadeRestaurantChoice
 import android.annotation.SuppressLint
 import android.app.Application
 import android.graphics.Color
-import com.kardabel.go4lunch.R
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.ViewModel
+import com.kardabel.go4lunch.R
+import com.kardabel.go4lunch.model.UserModel
+import com.kardabel.go4lunch.model.UserWhoMadeRestaurantChoice
+import com.kardabel.go4lunch.repository.UsersWhoMadeRestaurantChoiceRepository
+import com.kardabel.go4lunch.repository.WorkmatesRepository
 import java.lang.Boolean.compare
-import java.util.*
 
 class WorkMatesViewModel constructor(
     private val application: Application,
@@ -90,12 +89,12 @@ class WorkMatesViewModel constructor(
             }
         }
         // SORT THE LIST BY BOOLEAN, IF TRUE, APPEARS AT THE TOP OF THE LIST
-        workMateListViewState.sortWith(Comparator { (_, _, _, _, gotRestaurant), (_, _, _, _, gotRestaurant1) ->
+        workMateListViewState.sortWith { (_, _, _, _, gotRestaurant), (_, _, _, _, gotRestaurant1) ->
             compare(
                 !gotRestaurant,
                 !gotRestaurant1
             )
-        })
+        }
         return workMateListViewState
     }
 
