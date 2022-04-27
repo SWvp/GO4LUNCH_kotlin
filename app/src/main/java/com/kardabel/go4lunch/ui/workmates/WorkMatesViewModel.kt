@@ -16,8 +16,8 @@ import java.util.*
 
 class WorkMatesViewModel constructor(
     private val application: Application,
-    private val workmatesRepository: WorkmatesRepository,
-    private val usersWhoMadeRestaurantChoiceRepository: UsersWhoMadeRestaurantChoiceRepository,
+    workmatesRepository: WorkmatesRepository,
+    usersWhoMadeRestaurantChoiceRepository: UsersWhoMadeRestaurantChoiceRepository,
 ) : ViewModel() {
 
     // HERE WE HAVE 2 COLLECTIONS TO OBSERVE:
@@ -87,7 +87,6 @@ class WorkMatesViewModel constructor(
                         textColor = colorText
                     )
                 )
-
             }
         }
         // SORT THE LIST BY BOOLEAN, IF TRUE, APPEARS AT THE TOP OF THE LIST
@@ -110,13 +109,8 @@ class WorkMatesViewModel constructor(
         workmatesWhoMadeRestaurantChoices?.let { workmates ->
             workmates.forEach { workmate ->
                 if (workmate.userId.equals(workmateId)) {
-                    restaurantName =
-                        " " +
-                                application.getString(R.string.left_bracket) +
-                                workmate.restaurantName +
-                                application.getString(R.string.right_bracket)
+                    restaurantName = " " + application.getString(R.string.left_bracket) + workmate.restaurantName + application.getString(R.string.right_bracket)
                 }
-
             }
         }
         return restaurantName
