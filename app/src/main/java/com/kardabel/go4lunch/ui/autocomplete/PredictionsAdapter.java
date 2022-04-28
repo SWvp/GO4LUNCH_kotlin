@@ -83,6 +83,5 @@ public class PredictionsAdapter extends ListAdapter<PredictionViewState, Predict
 
     public interface OnPredictionItemClickedListener {
         void onPredictionItemClicked(String predictionText);
-
     }
 }
