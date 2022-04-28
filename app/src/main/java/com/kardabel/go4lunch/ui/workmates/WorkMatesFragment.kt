@@ -1,5 +1,6 @@
 package com.kardabel.go4lunch.ui.workmates
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.kardabel.go4lunch.databinding.RecyclerviewWorkmatesBinding
 import com.kardabel.go4lunch.di.ViewModelFactory
 import com.kardabel.go4lunch.ui.chat.ChatActivity
+import com.kardabel.go4lunch.ui.detailsview.RestaurantDetailsActivity
 
 class WorkMatesFragment : Fragment() {
 
@@ -40,7 +42,15 @@ class WorkMatesFragment : Fragment() {
             ViewModelProvider(this, workmatesViewModelFactory)[WorkMatesViewModel::class.java]
 
         // CONFIGURE RECYCLERVIEW
-        val adapter = WorkMatesRecyclerViewAdapter()
+        val adapter = WorkMatesRecyclerViewAdapter { workmate ->
+            startActivity(Intent(ChatActivity.navigate(
+                requireContext(),
+                workmate.workmateId,
+                workmate.workmateName,
+                workmate.workmatePhoto)))
+
+        }
+
         binding.workmateRecyclerView.adapter = adapter
         binding.workmateRecyclerView.addItemDecoration(
             DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL))
@@ -48,19 +58,8 @@ class WorkMatesFragment : Fragment() {
             LinearLayoutManager(context, RecyclerView.VERTICAL, false)
 
         workMatesViewModel.workMatesViewStateMediatorLiveData.observe(viewLifecycleOwner) { workmatesList ->
-            adapter.setWorkmatesListData(workmatesList)
+            adapter.submitList(workmatesList)
         }
-
-        adapter.setOnItemClickListener { (workmateName, _, workmatePhoto, workmateId) ->
-            startActivity(
-                ChatActivity.navigate(
-                    requireContext(),
-                    workmateId,
-                    workmateName,
-                    workmatePhoto)
-            )
-        }
-
     }
 
     override fun onDestroyView() {

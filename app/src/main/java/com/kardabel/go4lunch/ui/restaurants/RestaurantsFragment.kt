@@ -43,9 +43,7 @@ class RestaurantsFragment: Fragment() {
         val restaurantsViewModel = ViewModelProvider(this, restaurantsViewModelFactory)[RestaurantsViewModel::class.java]
 
         val adapter = RestaurantsRecyclerViewAdapter { restaurantId ->
-
             startActivity(Intent(RestaurantDetailsActivity.navigate(requireContext(), restaurantId)))
-
         }
 
         binding.restaurantListRecyclerView.addItemDecoration(
@@ -53,13 +51,11 @@ class RestaurantsFragment: Fragment() {
         )
         binding.restaurantListRecyclerView.layoutManager =
             LinearLayoutManager(context, RecyclerView.VERTICAL, false)
-
         binding.restaurantListRecyclerView.adapter = adapter
 
         restaurantsViewModel.getRestaurantsWrapperViewStateMediatorLiveData.observe(viewLifecycleOwner){ restaurantsWrapperViewState ->
             adapter.submitList(restaurantsWrapperViewState.itemRestaurant)
         }
-
     }
 
     override fun onDestroyView() {
