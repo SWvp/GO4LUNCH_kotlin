@@ -82,8 +82,9 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
                 });
 
         // FEED THE ADAPTER IF NEEDED
-        restaurantDetailsViewModel.getWorkmatesLikeThisRestaurantMediatorLiveData()
-                .observe(this, adapter::setWorkmatesListData);
+        restaurantDetailsViewModel.getWorkmatesLikeThisRestaurantMediatorLiveData().observe(this, list ->
+                adapter.submitList(list)
+        );
 
         binding.choseRestaurantButton.setOnClickListener(v -> restaurantDetailsViewModel.onChoseRestaurantButtonClick(
                 restaurantId,

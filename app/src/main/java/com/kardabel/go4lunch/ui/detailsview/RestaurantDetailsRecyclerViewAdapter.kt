@@ -1,67 +1,87 @@
-package com.kardabel.go4lunch.ui.detailsview;
+package com.kardabel.go4lunch.ui.detailsview
 
-import android.annotation.SuppressLint;
-import android.view.LayoutInflater;
-import android.view.ViewGroup;
+import android.annotation.SuppressLint
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.Priority
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.kardabel.go4lunch.R
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
+class RestaurantDetailsRecyclerViewAdapter(
+    //private val listener: (placeId: String) -> Unit
+) : ListAdapter<RestaurantDetailsWorkmatesViewState, RestaurantDetailsRecyclerViewAdapter.RestaurantDetailsViewHolder>(
+    ListComparator) {
 
-import com.bumptech.glide.Glide;
-import com.kardabel.go4lunch.databinding.ItemWorkmateBinding;
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RestaurantDetailsViewHolder {
+        return RestaurantDetailsViewHolder.create(parent)
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class RestaurantDetailsRecyclerViewAdapter extends RecyclerView.Adapter<RestaurantDetailsRecyclerViewAdapter.ViewHolder> {
-
-    private List<RestaurantDetailsWorkmatesViewState> workmatesList= new ArrayList<>();
-
-    @NonNull
-    @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        ItemWorkmateBinding binding = ItemWorkmateBinding.inflate(
-                LayoutInflater.from(parent.getContext()),
-                parent,
-                false);
-        return new ViewHolder(binding);
     }
 
-    @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    override fun onBindViewHolder(holder: RestaurantDetailsViewHolder, position: Int) {
+        val current = getItem(position)
+        holder.bind(
+            current,
+            //listener
+        )
+    }
 
-        RestaurantDetailsWorkmatesViewState workMate = workmatesList.get(position);
+    class RestaurantDetailsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        holder.viewHolderBinding.itemWorkmateDescription.setText(workMate.getWorkmateName());
-        Glide.with(holder.viewHolderBinding.itemWorkmateAvatar.getContext())
-                .load(workMate.getWorkmateDetailPhoto())
+        private val workmateDescription: TextView =
+            itemView.findViewById(R.id.item_workmate_description)
+
+        private val photo: ImageView = itemView.findViewById(R.id.item_workmate_avatar)
+
+        @SuppressLint("ResourceAsColor")
+        fun bind(
+            restaurantDetailsViewState: RestaurantDetailsWorkmatesViewState,
+            //listener: (String) -> Unit
+        ) {
+
+            workmateDescription.text = restaurantDetailsViewState.workmateName
+
+            Glide
+                .with(photo.context)
+                .load(restaurantDetailsViewState.workmateDetailPhoto)
+                //.error(R.drawable.no_photo_available_yet)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .priority(Priority.HIGH)
                 .circleCrop()
-                .into(holder.viewHolderBinding.itemWorkmateAvatar);
+                .into(photo)
 
-    }
 
-    @Override
-    public int getItemCount() {
-        if(workmatesList == null){
-            return 0;
-        } else{
-            return workmatesList.size();
+            // TODO: let click on an item and go to chat view
+            // itemView.setOnClickListener {
+            //     listener.invoke()
+            // }
         }
 
-    }
 
-    @SuppressLint("NotifyDataSetChanged")
-    public void setWorkmatesListData(List<RestaurantDetailsWorkmatesViewState> workMates){
-        this.workmatesList = workMates;
-        notifyDataSetChanged();
-
-    }
-
-    public static class ViewHolder extends RecyclerView.ViewHolder{
-        ItemWorkmateBinding viewHolderBinding;
-        public ViewHolder(@NonNull ItemWorkmateBinding itemView) {
-            super(itemView.getRoot());
-            this.viewHolderBinding = itemView;
+        companion object {
+            fun create(parent: ViewGroup): RestaurantDetailsViewHolder {
+                val view: View = LayoutInflater.from(parent.context)
+                    .inflate(R.layout.item_workmate, parent, false)
+                return RestaurantDetailsViewHolder(view)
+            }
         }
+    }
+
+    object ListComparator : DiffUtil.ItemCallback<RestaurantDetailsWorkmatesViewState>() {
+        override fun areItemsTheSame(
+            oldItem: RestaurantDetailsWorkmatesViewState,
+            newItem: RestaurantDetailsWorkmatesViewState,
+        ): Boolean = oldItem == newItem
+
+        override fun areContentsTheSame(
+            oldItem: RestaurantDetailsWorkmatesViewState,
+            newItem: RestaurantDetailsWorkmatesViewState,
+        ): Boolean = oldItem == newItem
     }
 }
