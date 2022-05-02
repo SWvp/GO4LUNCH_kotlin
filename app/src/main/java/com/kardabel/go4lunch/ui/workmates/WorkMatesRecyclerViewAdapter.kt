@@ -39,7 +39,7 @@ class WorkMatesRecyclerViewAdapter(
         @SuppressLint("ResourceAsColor")
         fun bind(workMate: WorkMateViewState, listener: (WorkMateViewState) -> Unit) {
 
-            workmateDescription.text = workMate.workmateName
+            workmateDescription.text = workMate.workmateDescription
             workmateDescription.setTextColor(workMate.textColor)
             Glide
                 .with(photo.context)
