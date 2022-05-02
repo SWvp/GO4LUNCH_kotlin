@@ -60,7 +60,7 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
         restaurantDetailsViewModel.init(intent.getStringExtra(RESTAURANT_ID));
 
         // FEED THE DETAILS VIEW
-        restaurantDetailsViewModel.getRestaurantDetailsViewStateLiveData()
+        restaurantDetailsViewModel.getRestaurantDetailsViewStateMediatorLiveData()
                 .observe(this, details -> {
 
                     restaurantId = details.getDetailsRestaurantId();
@@ -82,7 +82,7 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
                 });
 
         // FEED THE ADAPTER IF NEEDED
-        restaurantDetailsViewModel.getWorkmatesWhoChoseThisRestaurant()
+        restaurantDetailsViewModel.getWorkmatesLikeThisRestaurantMediatorLiveData()
                 .observe(this, adapter::setWorkmatesListData);
 
         binding.choseRestaurantButton.setOnClickListener(v -> restaurantDetailsViewModel.onChoseRestaurantButtonClick(
