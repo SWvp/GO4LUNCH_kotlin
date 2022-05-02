@@ -34,7 +34,7 @@ class WorkMatesRecyclerViewAdapter(
         private val workmateDescription: TextView =
             itemView.findViewById(R.id.item_workmate_description)
 
-        private val photo: ImageView = itemView.findViewById(R.id.item_listview_restaurant_picture)
+        private val photo: ImageView = itemView.findViewById(R.id.item_workmate_avatar)
 
         @SuppressLint("ResourceAsColor")
         fun bind(workMate: WorkMateViewState, listener: (WorkMateViewState) -> Unit) {
@@ -47,6 +47,7 @@ class WorkMatesRecyclerViewAdapter(
                 //.error(R.drawable.no_photo_available_yet)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .priority(Priority.HIGH)
+                .circleCrop()
                 .into(photo)
             // TODO : if there is a solution to pass styleRes to avoid "if" in view
             if (!workMate.gotRestaurant) {
