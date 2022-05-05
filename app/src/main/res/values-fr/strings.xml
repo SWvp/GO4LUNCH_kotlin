@@ -126,8 +126,8 @@
     <string name="no_phone_number">Pas de téléphone</string>
     <string name="no_phone_number_message">Ce restaurant n\'a pas communiqué de numéro</string>
     <string name="tel">tel:</string>
+    <string name="google">https://www.google.com/</string>
     <string name="no_website">Il semblerait que le restaurant n\'est pas sur la toile, tentez votre chance avec Google !</string>
-
 
     <!-- MAIN ACTIVITY VIEW MODEL -->
     <string name="no_current_user_restaurant_choice">L\'utilisateur n\'a toujours pas choisi de restaurant</string>

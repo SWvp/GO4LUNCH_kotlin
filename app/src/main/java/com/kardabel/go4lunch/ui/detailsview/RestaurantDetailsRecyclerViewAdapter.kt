@@ -15,7 +15,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.kardabel.go4lunch.R
 
 class RestaurantDetailsRecyclerViewAdapter(
-    //private val listener: (placeId: String) -> Unit
+    private val listener: (placeId: String) -> Unit
 ) : ListAdapter<RestaurantDetailsWorkmatesViewState, RestaurantDetailsRecyclerViewAdapter.RestaurantDetailsViewHolder>(
     ListComparator) {
 

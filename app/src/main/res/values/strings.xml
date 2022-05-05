@@ -126,6 +126,7 @@
     <string name="no_phone_number">no phone number</string>
     <string name="no_phone_number_message">This restaurant doesn\'t have phone number</string>
     <string name="tel">tel:</string>
+    <string name="google">https://www.google.com/</string>
     <string name="no_website">It seems your restaurant isn\'t on the web, but you can try on google !</string>
 
     <!-- MAIN ACTIVITY VIEW MODEL -->
