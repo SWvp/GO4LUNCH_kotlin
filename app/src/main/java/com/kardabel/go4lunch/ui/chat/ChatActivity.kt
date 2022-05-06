@@ -1,114 +1,111 @@
-package com.kardabel.go4lunch.ui.chat;
+package com.kardabel.go4lunch.ui.chat
 
-import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
-import android.graphics.Color;
-import android.os.Bundle;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.Toast;
+import android.app.Activity
+import android.content.Context
+import android.content.Intent
+import android.graphics.Color
+import android.os.Bundle
+import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.kardabel.go4lunch.R
+import com.kardabel.go4lunch.databinding.ChatActivityBinding
+import com.kardabel.go4lunch.di.ViewModelFactory
+import java.util.*
 
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+class ChatActivity : AppCompatActivity() {
 
-import com.bumptech.glide.Glide;
-import com.kardabel.go4lunch.R;
-import com.kardabel.go4lunch.databinding.ChatActivityBinding;
-import com.kardabel.go4lunch.di.ViewModelFactory;
+    private lateinit var binding: ChatActivityBinding
+    private lateinit var viewModel: ChatViewModel
 
-import java.util.Objects;
+    companion object {
+        const val WORKMATE_ID = "WORKMATE_ID"
+        const val WORKMATE_NAME = "WORKMATE_NAME"
+        const val WORKMATE_PHOTO = "WORKMATE_PHOTO"
+        fun navigate(
+            context: Context,
+            workmateId: String,
+            workmateName: String,
+            workmatePhoto: String,
+        ): Intent {
+            val intent = Intent(context, ChatActivity::class.java)
+            intent.putExtra(WORKMATE_ID, workmateId)
+            intent.putExtra(WORKMATE_NAME, workmateName)
+            intent.putExtra(WORKMATE_PHOTO, workmatePhoto)
+            return intent
+        }
 
-public class ChatActivity extends AppCompatActivity {
-
-    private static final String WORKMATE_ID = "WORKMATE_ID";
-    private static final String WORKMATE_NAME = "WORKMATE_NAME";
-    private static final String WORKMATE_PHOTO = "WORKMATE_PHOTO";
-
-    private ChatActivityBinding binding;
-    private ChatViewModel chatViewModel;
-
-    public static Intent navigate(
-            Context context,
-            String workmateId,
-            String workmateName,
-            String workmatePhoto) {
-        Intent intent = new Intent(context, ChatActivity.class);
-        intent.putExtra(WORKMATE_ID, workmateId);
-        intent.putExtra(WORKMATE_NAME, workmateName);
-        intent.putExtra(WORKMATE_PHOTO, workmatePhoto);
-        return intent;
+        fun hideSoftKeyboard(activity: Activity?) {
+            if (activity == null) return
+            if (activity.currentFocus == null) return
+            val inputMethodManager =
+                activity.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+            inputMethodManager.hideSoftInputFromWindow(activity.currentFocus!!.windowToken, 0)
+        }
     }
 
-    @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        binding = ChatActivityBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
 
-        ChatAdapter adapter = new ChatAdapter(this);
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        binding = ChatActivityBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        binding.activityChatRecyclerView.setAdapter(adapter);
-        binding.activityChatRecyclerView.setLayoutManager(
-                new LinearLayoutManager(
-                        ChatActivity.this,
-                        RecyclerView.VERTICAL,
-                        false));
+        manageViewModel()
+        managerAdapter()
+        manageView()
 
-        // CONFIGURE VIEWMODEL
-        ViewModelFactory chatViewModelFactory = ViewModelFactory.getInstance();
-        chatViewModel =
-                new ViewModelProvider(this, chatViewModelFactory).get(ChatViewModel.class);
+    }
 
-        // INIT THE VIEW MODEL WITH THE WORKMATE ID PASSED IN INTENT
-        // (WE NEED CURRENT USER TOO BUT IT WILL BE LATER, IN THE USECASE)
-        Intent intent = getIntent();
-        chatViewModel.init(intent.getStringExtra(WORKMATE_ID));
+    private fun manageViewModel() {
+        val viewModelFactory = ViewModelFactory.getInstance()
+        viewModel =
+            ViewModelProvider(this, viewModelFactory)[ChatViewModel::class.java]
 
-        // FEED THE VIEW WITH MATE INFORMATION
-        binding.mateName.setText(intent.getStringExtra(WORKMATE_NAME));
-        Glide.with(binding.workmatePhoto.getContext())
-                .load(intent.getStringExtra(WORKMATE_PHOTO))
-                .circleCrop()
-                .into(binding.workmatePhoto);
-        binding.backButton.setBackgroundColor(Color.parseColor(getString(R.string.back_button_color)));
+        intent.getStringExtra(WORKMATE_ID)?.let { viewModel.init(it) }
+    }
 
-        chatViewModel.getGetChatMessagesMediatorLiveData().observe(this, chatViewStatesList -> {
-            adapter.submitList(chatViewStatesList);
+    private fun managerAdapter() {
+        binding.activityChatRecyclerView.layoutManager =
+            LinearLayoutManager(this, RecyclerView.VERTICAL, false)
+        val adapter = ChatAdapter (this)
+        binding.activityChatRecyclerView.adapter = adapter
 
+        viewModel.getChatMessagesMediatorLiveData.observe(this) { chatMessages ->
+            adapter.submitList(chatMessages)
             // MOVE TO THE LATEST MESSAGE
-            binding.activityChatRecyclerView.scrollToPosition(chatViewStatesList.size() - 1);
+            binding.activityChatRecyclerView.scrollToPosition(chatMessages.size - 1)
+        }
+    }
 
-        });
+    private fun manageView() {
+        // FEED THE VIEW WITH MATE INFORMATION
+        binding.mateName.text = intent.getStringExtra(WORKMATE_NAME)
+        Glide.with(binding.workmatePhoto.context)
+            .load(intent.getStringExtra(WORKMATE_PHOTO))
+            .circleCrop()
+            .into(binding.workmatePhoto)
+        binding.backButton.setBackgroundColor(Color.parseColor(getString(R.string.back_button_color)))
 
-        binding.activityChatSendButton.setOnClickListener(v -> {
-            if (!Objects.requireNonNull(binding.chatMessageEditText.getText()).toString().isEmpty()) {
-                String message = binding.chatMessageEditText.getText().toString();
-                chatViewModel.createChatMessage(message, intent.getStringExtra(WORKMATE_ID));
-                binding.chatMessageEditText.getText().clear();
-                hideSoftKeyboard(ChatActivity.this);
-
+        binding.activityChatSendButton.setOnClickListener { v ->
+            if (!Objects.requireNonNull(binding.chatMessageEditText.text).toString()
+                    .isEmpty()
+            ) {
+                val message = binding.chatMessageEditText.text.toString()
+                viewModel.createChatMessage(message,
+                    intent.getStringExtra(WORKMATE_ID)!!)
+                binding.chatMessageEditText.text!!.clear()
+                hideSoftKeyboard(this)
             } else {
                 Toast.makeText(
-                        ChatActivity.this,
-                        getString(R.string.type_your_text),
-                        Toast.LENGTH_SHORT).show();
+                    this,
+                    getString(R.string.type_your_text),
+                    Toast.LENGTH_SHORT).show()
             }
-        });
-
-        binding.backButton.setOnClickListener(view -> onBackPressed());
+        }
+        binding.backButton.setOnClickListener { onBackPressed() }
     }
-
-    public static void hideSoftKeyboard(Activity activity) {
-        if (activity == null) return;
-        if (activity.getCurrentFocus() == null) return;
-
-        InputMethodManager inputMethodManager =
-                (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
-        inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
-
-    }
-
 }
