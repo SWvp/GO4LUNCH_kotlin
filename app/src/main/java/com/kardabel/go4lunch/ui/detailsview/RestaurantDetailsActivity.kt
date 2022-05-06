@@ -21,7 +21,7 @@ class RestaurantDetailsActivity : AppCompatActivity() {
 
     companion object {
         const val RESTAURANT_ID = "RESTAURANT_ID"
-        fun navigate(context: Context?, placeId: String?): Intent {
+        fun navigate(context: Context, placeId: String): Intent {
             val intent = Intent(context, RestaurantDetailsActivity::class.java)
             intent.putExtra(RESTAURANT_ID, placeId)
             return intent

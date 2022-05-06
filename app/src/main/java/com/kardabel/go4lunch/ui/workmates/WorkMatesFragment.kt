@@ -45,9 +45,9 @@ class WorkMatesFragment : Fragment() {
         val adapter = WorkMatesRecyclerViewAdapter { workmate ->
             startActivity(Intent(ChatActivity.navigate(
                 requireContext(),
-                workmate.workmateId,
-                workmate.workmateName,
-                workmate.workmatePhoto)))
+                workmate.workmateId!!,
+                workmate.workmateName!!,
+                workmate.workmatePhoto!!)))
 
         }
 

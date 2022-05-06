@@ -203,7 +203,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private fun checkUserRestaurantChoice() {
         when(currentUserRestaurantChoiceStatus){
             0 -> Toast.makeText(this, this.getString(R.string.no_restaurant_selected), Toast.LENGTH_SHORT).show()
-            1 -> startActivity(RestaurantDetailsActivity.navigate(this, restaurantId))
+            1 -> startActivity(RestaurantDetailsActivity.navigate(this, restaurantId!!))
         }
     }
 

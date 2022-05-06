@@ -84,7 +84,7 @@ class MapFragment : SupportMapFragment(), OnMapReadyCallback, GoogleMap.OnMarker
 
     override fun onMarkerClick(marker: Marker): Boolean {
         val placeId = marker.tag as String?
-        startActivity(RestaurantDetailsActivity.navigate(requireContext(), placeId))
+        startActivity(RestaurantDetailsActivity.navigate(requireContext(), placeId!!))
         return false
     }
 
