@@ -1,108 +1,84 @@
-package com.kardabel.go4lunch.ui.chat;
+package com.kardabel.go4lunch.ui.chat
+
+import android.content.Context
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView
+import com.kardabel.go4lunch.R
 
 
-import android.annotation.SuppressLint;
-import android.content.Context;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
+class ChatAdapter(
+    activityContext: Context,
+) : ListAdapter<ChatViewState, RecyclerView.ViewHolder>(ListComparator) {
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
+    private val messageType = 1
+    val context = activityContext
 
-import com.kardabel.go4lunch.R;
-
-import java.util.ArrayList;
-import java.util.List;
-
-public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-
-    private final Context context;
-    List<ChatViewState> chatMessagesList = new ArrayList<>();
-    public static final int MESSAGE_TYPE_IN = 1;
-
-    public ChatAdapter(Context context) {
-        this.context = context;
-    }
-
-    // VIEW HOLDER FOR INCOMING MESSAGE
-    private class MessageInViewHolder extends RecyclerView.ViewHolder {
-
-        TextView message, date;
-
-        MessageInViewHolder(final View itemView) {
-            super(itemView);
-            message = itemView.findViewById(R.id.incoming_message_text);
-            date = itemView.findViewById(R.id.incoming_message_date);
-        }
-
-        void bind(int position) {
-            ChatViewState chatViewState = chatMessagesList.get(position);
-            message.setText(chatViewState.getChatMessageViewState());
-            date.setText(chatViewState.getChatMessageTimeViewState());
-        }
-    }
-
-    // VIEW HOLDER FOR OUTGOING MESSAGE
-    private class MessageOutViewHolder extends RecyclerView.ViewHolder {
-
-        TextView message, date;
-
-        MessageOutViewHolder(final View itemView) {
-            super(itemView);
-            message = itemView.findViewById(R.id.outgoing_message_text);
-            date = itemView.findViewById(R.id.outgoing_message_date);
-        }
-
-        void bind(int position) {
-            ChatViewState chatViewState = chatMessagesList.get(position);
-            message.setText(chatViewState.getChatMessageViewState());
-            date.setText(chatViewState.getChatMessageTimeViewState());
-        }
-    }
-
-    @NonNull
-    @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        if (viewType == MESSAGE_TYPE_IN) {
-            return new MessageInViewHolder(LayoutInflater
-                    .from(context)
-                    .inflate(R.layout.item_chat_incoming, parent, false));
-        }
-        return new MessageOutViewHolder(LayoutInflater
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        return if (viewType == messageType) {
+            ChatIncomingViewHolder(LayoutInflater
                 .from(context)
-                .inflate(R.layout.item_chat_outgoing, parent, false));
+                .inflate(R.layout.item_chat_incoming, parent, false))
+        } else ChatOutgoingViewHolder(LayoutInflater
+            .from(context)
+            .inflate(R.layout.item_chat_outgoing, parent, false))
     }
 
-    @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        if (chatMessagesList.get(position).isSender() == MESSAGE_TYPE_IN) {
-            ((MessageInViewHolder) holder).bind(position);
-        } else {
-            ((MessageOutViewHolder) holder).bind(position);
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        if (holder is ChatIncomingViewHolder) {
+            (holder).bind(getItem(position))
+        } else if (holder is ChatOutgoingViewHolder) {
+            (holder).bind(getItem(position))
         }
     }
 
-    @Override
-    public int getItemCount() {
-        if (chatMessagesList == null) {
-            return 0;
-        } else {
-            return chatMessagesList.size();
+    class ChatIncomingViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+
+        private val message: TextView = itemView.findViewById(R.id.incoming_message_text)
+
+        private val date: TextView = itemView.findViewById(R.id.incoming_message_date)
+
+
+        fun bind(chatViewState: ChatViewState) {
+
+            message.text = chatViewState.chatMessageViewState
+            date.text = chatViewState.chatMessageTimeViewState
+
         }
     }
 
-    @Override
-    public int getItemViewType(int position) {
-        return chatMessagesList.get(position).isSender();
+    class ChatOutgoingViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        private val message: TextView = itemView.findViewById(R.id.outgoing_message_text)
+
+        private val date: TextView = itemView.findViewById(R.id.outgoing_message_date)
+
+
+        fun bind(chatViewState: ChatViewState) {
+
+            message.text = chatViewState.chatMessageViewState
+            date.text = chatViewState.chatMessageTimeViewState
+
+        }
     }
 
-    // CHAT MESSAGES LIST FROM ACTIVITY
-    @SuppressLint("NotifyDataSetChanged")
-    public void setChatMessagesListData(List<ChatViewState> chatMessagesList) {
-        this.chatMessagesList = chatMessagesList;
-        notifyDataSetChanged();
+    override fun getItemViewType(position: Int): Int {
+        return getItem(position).isSender
+    }
 
+    object ListComparator : DiffUtil.ItemCallback<ChatViewState>() {
+
+        override fun areItemsTheSame(
+            oldItem: ChatViewState,
+            newItem: ChatViewState,
+        ): Boolean = oldItem == newItem
+
+        override fun areContentsTheSame(
+            oldItem: ChatViewState,
+            newItem: ChatViewState,
+        ): Boolean = oldItem == newItem
     }
 }

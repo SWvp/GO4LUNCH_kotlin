@@ -75,8 +75,8 @@ public class ChatActivity extends AppCompatActivity {
                 .into(binding.workmatePhoto);
         binding.backButton.setBackgroundColor(Color.parseColor(getString(R.string.back_button_color)));
 
-        chatViewModel.getChatMessages().observe(this, chatViewStatesList -> {
-            adapter.setChatMessagesListData(chatViewStatesList);
+        chatViewModel.getGetChatMessagesMediatorLiveData().observe(this, chatViewStatesList -> {
+            adapter.submitList(chatViewStatesList);
 
             // MOVE TO THE LATEST MESSAGE
             binding.activityChatRecyclerView.scrollToPosition(chatViewStatesList.size() - 1);

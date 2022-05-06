@@ -4,5 +4,5 @@ data class ChatViewState constructor(
     val chatMessageViewState: String? = null,
     val isSender: Int = 0,
     val chatMessageTimeViewState: String? = null,
-    val timestamp: Long? = null
+    val timestamp: Long
 )
