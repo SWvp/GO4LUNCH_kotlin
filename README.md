@@ -63,7 +63,7 @@ Be notified by a push notification before the lunch break: this will inform you 
 * LiveData (currently being migrated to Flow)
 
 ## Dependency injection
-* ViewModel factory, handmade
+* ViewModel factory, handmade (soon replaced by Hilt)
 
 ## Unit tests
 * ViewModel and usecase with Mockito
