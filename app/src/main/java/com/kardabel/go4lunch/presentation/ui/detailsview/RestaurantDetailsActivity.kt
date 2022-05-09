@@ -51,7 +51,7 @@ class RestaurantDetailsActivity : AppCompatActivity() {
 
         binding.detailRecyclerView.layoutManager =
             LinearLayoutManager(this, RecyclerView.VERTICAL, false)
-        val adapter = RestaurantDetailsRecyclerViewAdapter {
+        val adapter = RestaurantDetailsAdapter {
 
         }
         binding.detailRecyclerView.adapter = adapter

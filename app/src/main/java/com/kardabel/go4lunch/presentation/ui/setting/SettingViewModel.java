@@ -11,8 +11,8 @@ import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 
 import com.kardabel.go4lunch.domain.repository.NotificationsRepository;
-import com.kardabel.go4lunch.core.util.PermissionsViewAction;
-import com.kardabel.go4lunch.core.util.SingleLiveEvent;
+import com.kardabel.go4lunch.util.PermissionsViewAction;
+import com.kardabel.go4lunch.util.SingleLiveEvent;
 import com.kardabel.go4lunch.workmanager.UploadWorker;
 
 import java.time.Clock;

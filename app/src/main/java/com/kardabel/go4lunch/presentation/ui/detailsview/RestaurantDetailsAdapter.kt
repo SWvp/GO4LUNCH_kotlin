@@ -14,9 +14,9 @@ import com.bumptech.glide.Priority
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.kardabel.go4lunch.R
 
-class RestaurantDetailsRecyclerViewAdapter(
+class RestaurantDetailsAdapter(
     private val listener: (placeId: String) -> Unit
-) : ListAdapter<RestaurantDetailsWorkmatesViewState, RestaurantDetailsRecyclerViewAdapter.RestaurantDetailsViewHolder>(
+) : ListAdapter<RestaurantDetailsAdapterViewState, RestaurantDetailsAdapter.RestaurantDetailsViewHolder>(
     ListComparator) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RestaurantDetailsViewHolder {
@@ -41,7 +41,7 @@ class RestaurantDetailsRecyclerViewAdapter(
 
         @SuppressLint("ResourceAsColor")
         fun bind(
-            restaurantDetailsViewState: RestaurantDetailsWorkmatesViewState,
+            restaurantDetailsViewState: RestaurantDetailsAdapterViewState,
             //listener: (String) -> Unit
         ) {
 
@@ -73,15 +73,15 @@ class RestaurantDetailsRecyclerViewAdapter(
         }
     }
 
-    object ListComparator : DiffUtil.ItemCallback<RestaurantDetailsWorkmatesViewState>() {
+    object ListComparator : DiffUtil.ItemCallback<RestaurantDetailsAdapterViewState>() {
         override fun areItemsTheSame(
-            oldItem: RestaurantDetailsWorkmatesViewState,
-            newItem: RestaurantDetailsWorkmatesViewState,
+            oldItem: RestaurantDetailsAdapterViewState,
+            newItem: RestaurantDetailsAdapterViewState,
         ): Boolean = oldItem == newItem
 
         override fun areContentsTheSame(
-            oldItem: RestaurantDetailsWorkmatesViewState,
-            newItem: RestaurantDetailsWorkmatesViewState,
+            oldItem: RestaurantDetailsAdapterViewState,
+            newItem: RestaurantDetailsAdapterViewState,
         ): Boolean = oldItem == newItem
     }
 }

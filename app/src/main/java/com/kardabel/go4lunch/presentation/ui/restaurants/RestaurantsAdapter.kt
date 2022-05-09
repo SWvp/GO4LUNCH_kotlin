@@ -15,13 +15,12 @@ import com.bumptech.glide.Priority
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.kardabel.go4lunch.R
 
-class RestaurantsRecyclerViewAdapter(
+class RestaurantsAdapter(
     private val listener: (placeId: String) -> Unit
-): ListAdapter<RestaurantsViewState, RestaurantsRecyclerViewAdapter.RestaurantViewHolder>(ListComparator){
+): ListAdapter<RestaurantsViewState, RestaurantsAdapter.RestaurantViewHolder>(ListComparator){
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RestaurantViewHolder {
         return RestaurantViewHolder.create(parent)
-
     }
 
     override fun onBindViewHolder(holder: RestaurantViewHolder, position: Int) {

@@ -42,7 +42,7 @@ class RestaurantsFragment: Fragment() {
         val restaurantsViewModelFactory = ViewModelFactory.getInstance()
         val restaurantsViewModel = ViewModelProvider(this, restaurantsViewModelFactory)[RestaurantsViewModel::class.java]
 
-        val adapter = RestaurantsRecyclerViewAdapter { restaurantId ->
+        val adapter = RestaurantsAdapter { restaurantId ->
             startActivity(Intent(RestaurantDetailsActivity.navigate(requireContext(), restaurantId)))
         }
 

@@ -35,7 +35,7 @@ class RestaurantDetailsViewModel constructor(
     val restaurantDetailsViewStateMediatorLiveData =
         MediatorLiveData<RestaurantDetailsViewState>()
     val workmatesLikeThisRestaurantMediatorLiveData =
-        MediatorLiveData<List<RestaurantDetailsWorkmatesViewState>>()
+        MediatorLiveData<List<RestaurantDetailsAdapterViewState>>()
 
     // INIT THE VIEW MODEL WITH THE PLACEID SEND IN THE INTENT
     fun init(placeId: String) {
@@ -258,9 +258,9 @@ class RestaurantDetailsViewModel constructor(
         restaurant: Restaurant,
         userWhoMadeRestaurantChoices: List<UserWhoMadeRestaurantChoice>,
         users: List<UserModel>,
-    ): List<RestaurantDetailsWorkmatesViewState> {
+    ): List<RestaurantDetailsAdapterViewState> {
 
-        val workMatesViewStateList = mutableListOf<RestaurantDetailsWorkmatesViewState>()
+        val workMatesViewStateList = mutableListOf<RestaurantDetailsAdapterViewState>()
 
         for (userWhoMadeChoice in userWhoMadeRestaurantChoices) {
             if (userWhoMadeChoice.restaurantId == restaurant.restaurantId) {
@@ -268,7 +268,7 @@ class RestaurantDetailsViewModel constructor(
                     if (user.uid == userWhoMadeChoice.userId) {
                         val name = user.userName + " " + application.getString(R.string.is_joining)
                         val avatar = user.avatarURL
-                        workMatesViewStateList.add(RestaurantDetailsWorkmatesViewState(
+                        workMatesViewStateList.add(RestaurantDetailsAdapterViewState(
                             name,
                             avatar!!
                         ))

@@ -17,7 +17,7 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.kardabel.go4lunch.R
 import com.kardabel.go4lunch.di.ViewModelFactory
 import com.kardabel.go4lunch.presentation.ui.detailsview.RestaurantDetailsActivity
-import com.kardabel.go4lunch.core.util.SvgToBitmapConverter
+import com.kardabel.go4lunch.util.SvgToBitmapConverter
 
 class MapFragment : SupportMapFragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
 

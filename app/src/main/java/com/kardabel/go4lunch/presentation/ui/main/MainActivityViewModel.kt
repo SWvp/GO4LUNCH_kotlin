@@ -18,8 +18,8 @@ import com.kardabel.go4lunch.domain.repository.UsersWhoMadeRestaurantChoiceRepos
 import com.kardabel.go4lunch.presentation.ui.autocomplete.PredictionViewState
 import com.kardabel.go4lunch.domain.usecase.GetCurrentUserIdUseCase
 import com.kardabel.go4lunch.domain.usecase.GetPredictionsUseCase
-import com.kardabel.go4lunch.core.util.PermissionsViewAction
-import com.kardabel.go4lunch.core.util.SingleLiveEvent
+import com.kardabel.go4lunch.util.PermissionsViewAction
+import com.kardabel.go4lunch.util.SingleLiveEvent
 
 class MainActivityViewModel constructor(
     private val application: Application,

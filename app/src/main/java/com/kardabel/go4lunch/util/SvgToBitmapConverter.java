@@ -1,10 +1,9 @@
-package com.kardabel.go4lunch.core.util;
+package com.kardabel.go4lunch.util;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
@@ -13,10 +12,8 @@ import androidx.core.graphics.drawable.DrawableCompat;
 public class SvgToBitmapConverter {
     public static Bitmap getBitmapFromVectorDrawable(Context context, int drawableId) {
         Drawable drawable = ContextCompat.getDrawable(context, drawableId);
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            assert drawable != null;
-            drawable = (DrawableCompat.wrap(drawable)).mutate();
-        }
+        assert drawable != null;
+        drawable = (DrawableCompat.wrap(drawable)).mutate();
 
         assert drawable != null;
         Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(),

@@ -32,18 +32,17 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
-import com.kardabel.go4lunch.presentation.ui.authentication.AuthenticationActivity
 import com.kardabel.go4lunch.R
 import com.kardabel.go4lunch.databinding.MainActivityBinding
 import com.kardabel.go4lunch.di.ViewModelFactory
+import com.kardabel.go4lunch.presentation.ui.authentication.AuthenticationActivity
 import com.kardabel.go4lunch.presentation.ui.autocomplete.PredictionViewState
 import com.kardabel.go4lunch.presentation.ui.autocomplete.PredictionsAdapter
 import com.kardabel.go4lunch.presentation.ui.detailsview.RestaurantDetailsActivity
 import com.kardabel.go4lunch.presentation.ui.setting.SettingActivity
-import com.kardabel.go4lunch.core.util.PermissionsViewAction
+import com.kardabel.go4lunch.util.PermissionsViewAction
 
-class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener,
-    PredictionsAdapter.OnPredictionItemClickedListener {
+class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     private var _binding: MainActivityBinding? = null
     private val binding get() = _binding!!
@@ -65,7 +64,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         // CONFIGURE VIEWMODEL
         val listViewModelFactory = ViewModelFactory.getInstance()
-        mainActivityViewModel = ViewModelProvider(this, listViewModelFactory)[MainActivityViewModel::class.java]
+        mainActivityViewModel =
+            ViewModelProvider(this, listViewModelFactory)[MainActivityViewModel::class.java]
 
         drawerLayout = binding.drawerLayout
 
@@ -118,13 +118,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun configureViewModel() {
-        mainActivityViewModel!!.actionSingleLiveEvent.observe(this){ action ->
-            when(action){
+        mainActivityViewModel!!.actionSingleLiveEvent.observe(this) { action ->
+            when (action) {
                 PermissionsViewAction.PERMISSION_ASKED -> {
                     ActivityCompat.requestPermissions(this,
                         arrayOf(permission.ACCESS_FINE_LOCATION),
                         locationPermissionCode)
-                    Toast.makeText(this, getString(R.string.need_your_position), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, getString(R.string.need_your_position), Toast.LENGTH_SHORT)
+                        .show()
                 }
                 PermissionsViewAction.PERMISSION_DENIED -> {
                     val alertDialogBuilder = MaterialAlertDialogBuilder(this)
@@ -168,14 +169,17 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private fun configureYourLunch() {
         mainActivityViewModel!!.getUserRestaurantChoice()
-        mainActivityViewModel!!.mainActivityYourLunchViewStateMediatorLiveData.observe(this){ userLunch ->
+        mainActivityViewModel!!.mainActivityYourLunchViewStateMediatorLiveData.observe(this) { userLunch ->
             restaurantId = userLunch.restaurantId
             currentUserRestaurantChoiceStatus = userLunch.currentUserRestaurantChoiceStatus
         }
     }
 
     private fun configureRecyclerView() {
-        adapter = PredictionsAdapter(this)
+        adapter = PredictionsAdapter { predictionText ->
+            mainActivityViewModel!!.userSearch(predictionText)
+            initAutocomplete()
+        }
         val recyclerView = findViewById<RecyclerView>(R.id.predictions_recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter
@@ -187,9 +191,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        when(item.itemId){
+        when (item.itemId) {
             R.id.your_lunch -> checkUserRestaurantChoice()
-            R.id.settings -> { startActivity(Intent(this, SettingActivity::class.java)) }
+            R.id.settings -> {
+                startActivity(Intent(this, SettingActivity::class.java))
+            }
             R.id.logout -> {
                 FirebaseAuth.getInstance().signOut()
                 startActivity(Intent(this, AuthenticationActivity::class.java))
@@ -201,15 +207,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun checkUserRestaurantChoice() {
-        when(currentUserRestaurantChoiceStatus){
-            0 -> Toast.makeText(this, this.getString(R.string.no_restaurant_selected), Toast.LENGTH_SHORT).show()
+        when (currentUserRestaurantChoiceStatus) {
+            0 -> Toast.makeText(this,
+                this.getString(R.string.no_restaurant_selected),
+                Toast.LENGTH_SHORT).show()
             1 -> startActivity(RestaurantDetailsActivity.navigate(this, restaurantId!!))
         }
-    }
-
-    override fun onPredictionItemClicked(predictionText: String?) {
-        mainActivityViewModel!!.userSearch(predictionText)
-        initAutocomplete()
     }
 
     // CLEAR THE AUTOCOMPLETE ADAPTER WITH EMPTY LIST WHEN USER FINISHED HIS RESEARCH
@@ -242,7 +245,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         searchView.setIconifiedByDefault(false)
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String): Boolean { return false }
+            override fun onQueryTextSubmit(query: String): Boolean {
+                return false
+            }
 
             override fun onQueryTextChange(newText: String): Boolean {
                 mainActivityViewModel!!.sendTextToAutocomplete(newText)
@@ -252,7 +257,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         // WHEN USER LEAVES THE SEARCHVIEW, RESET AND CLOSE THE SEARCHVIEW
         item.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
-            override fun onMenuItemActionExpand(item: MenuItem): Boolean { return true }
+            override fun onMenuItemActionExpand(item: MenuItem): Boolean {
+                return true
+            }
 
             override fun onMenuItemActionCollapse(item: MenuItem): Boolean {
                 mainActivityViewModel!!.userSearch("")
