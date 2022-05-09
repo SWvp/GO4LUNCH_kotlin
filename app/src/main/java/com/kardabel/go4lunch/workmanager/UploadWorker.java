@@ -18,8 +18,8 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.kardabel.go4lunch.R;
-import com.kardabel.go4lunch.model.UserWhoMadeRestaurantChoice;
-import com.kardabel.go4lunch.ui.detailsview.RestaurantDetailsActivity;
+import com.kardabel.go4lunch.domain.model.UserWhoMadeRestaurantChoice;
+import com.kardabel.go4lunch.presentation.ui.detailsview.RestaurantDetailsActivity;
 
 import java.time.LocalDate;
 import java.util.ArrayList;

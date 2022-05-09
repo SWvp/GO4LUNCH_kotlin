@@ -8,7 +8,7 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     tools:openDrawer="start"
-    tools:context=".ui.main.MainActivity">
+    tools:context=".presentation.ui.main.MainActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/container"
@@ -44,7 +44,7 @@
             app:layoutManager="LinearLayoutManager"
             android:fitsSystemWindows="true"
             android:clipToPadding="false"
-            tools:context=".ui.main.MainActivity"
+            tools:context=".presentation.ui.main.MainActivity"
             tools:listitem="@layout/item_prediction"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toTopOf="@id/nav_view"/>

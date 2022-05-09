@@ -31,7 +31,7 @@
 
         <!--ACTIVITY-->
         <activity
-            android:name=".AuthenticationActivity"
+            android:name=".presentation.ui.authentication.AuthenticationActivity"
             android:exported="true"
             android:label="@string/app_name">
             <intent-filter>
@@ -41,17 +41,17 @@
         </activity>
 
         <activity
-            android:name=".ui.main.MainActivity"
-            android:parentActivityName=".AuthenticationActivity" />
+            android:name="com.kardabel.go4lunch.presentation.ui.main.MainActivity"
+            android:parentActivityName=".presentation.ui.authentication.AuthenticationActivity" />
         <activity
-            android:name=".ui.detailsview.RestaurantDetailsActivity"
-            android:parentActivityName=".ui.main.MainActivity" />
+            android:name="com.kardabel.go4lunch.presentation.ui.detailsview.RestaurantDetailsActivity"
+            android:parentActivityName="com.kardabel.go4lunch.presentation.ui.main.MainActivity" />
         <activity
-            android:name=".ui.chat.ChatActivity"
-            android:parentActivityName=".ui.main.MainActivity" />
+            android:name="com.kardabel.go4lunch.presentation.ui.chat.ChatActivity"
+            android:parentActivityName="com.kardabel.go4lunch.presentation.ui.main.MainActivity" />
         <activity
-            android:name=".ui.setting.SettingActivity"
-            android:parentActivityName=".ui.main.MainActivity" />
+            android:name="com.kardabel.go4lunch.presentation.ui.setting.SettingActivity"
+            android:parentActivityName="com.kardabel.go4lunch.presentation.ui.main.MainActivity" />
 
 
     </application>
