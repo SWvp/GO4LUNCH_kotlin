@@ -76,7 +76,7 @@ Be notified by a push notification before the lunch break: this will inform you 
 
 ## How to use this app
 * Go to [build.gradle](https://github.com/SWvp/GO4LUNCH_kotlin/blob/main/app/build.gradle) line 24 & 25
-* replace GOOGLE_MAP_API_KEY by '"your-google-map-key-here"'
+* replace OC_P7_Google_Maps_Sdk_key by '"your-google-map-key-here"'
 * or edit/create gradle.properties in user\.gradle folder with GOOGLE_MAP_API_KEY="your-google-map-key-here"
 
 Feel free to send feedback about your experience !
