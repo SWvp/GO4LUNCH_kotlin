@@ -29,7 +29,7 @@ public class SettingActivity extends AppCompatActivity {
                         .get(SettingViewModel.class);
 
         // OBSERVER
-        settingViewModel.getSwitchPosition().observe(this, switchPosition -> {
+        settingViewModel.getGetSwitchPosition().observe(this, switchPosition -> {
             switch (switchPosition) {
                 case 1:
                     binding.switchNotification.setChecked(false);
