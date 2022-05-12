@@ -10,6 +10,7 @@ import androidx.lifecycle.Transformations;
 
 import com.kardabel.go4lunch.R;
 import com.kardabel.go4lunch.domain.pojo.NearbySearchResults;
+import com.kardabel.go4lunch.domain.pojo.Restaurant;
 import com.kardabel.go4lunch.domain.pojo.RestaurantDetailsResult;
 import com.kardabel.go4lunch.domain.repository.LocationRepository;
 import com.kardabel.go4lunch.domain.repository.NearbySearchResponseRepository;
@@ -21,7 +22,6 @@ import java.util.List;
 public class GetRestaurantDetailsResultsUseCase {
 
     public static final String RESTAURANT = "restaurant";
-    public static final String RADIUS = "1000";
 
     private final MediatorLiveData<List<RestaurantDetailsResult>> restaurantsDetailsMediatorLiveData =
             new MediatorLiveData<>();
@@ -50,11 +50,11 @@ public class GetRestaurantDetailsResultsUseCase {
         });
 
         // THE COMBINE METHOD ALLOW NULL ARGS, SO LETS NEARBY TRIGGER THE COMBINE,
-        // THE DETAILS WILL BE TRIGGER BY ADDSOURCE IN COMBINE
+        // THEN, WHEN DETAILS RESULT IS SEND BY REPO, TRIGGER COMBINE TO SET LIVEDATA VALUE
         restaurantsDetailsMediatorLiveData.addSource(nearbySearchResultsLiveData, nearbySearchResults ->
                 combine(
                         nearbySearchResults,
-                        restaurantDetailsMediatorLiveData.getValue()));
+                        null));
 
         restaurantsDetailsMediatorLiveData.addSource(restaurantDetailsMediatorLiveData, restaurantDetailsResult ->
                 combine(
@@ -66,22 +66,21 @@ public class GetRestaurantDetailsResultsUseCase {
     private void combine(@Nullable NearbySearchResults nearbySearchResults,
                          @Nullable RestaurantDetailsResult restaurantDetailsResult) {
 
-        if (nearbySearchResults != null) {
+        assert nearbySearchResults != null;
+        if (nearbySearchResults.getResults() != null) {
 
-            for (int i = 0; i < nearbySearchResults.getResults().size(); i++) {
 
+            for (Restaurant restaurant: nearbySearchResults.getResults()) {
 
                 if (!restaurantDetailsList.contains(restaurantDetailsResult) || restaurantDetailsResult == null) {
-                    String placeId = nearbySearchResults.getResults().get(i).getRestaurantId();
+
+                    String placeId = restaurant.getRestaurantId();
 
                     restaurantDetailsMediatorLiveData.addSource(
-                            restaurantDetailsResponseRepository.getRestaurantDetailsLiveData(placeId), new Observer<RestaurantDetailsResult>() {
-                                @Override
-                                public void onChanged(RestaurantDetailsResult restaurantDetailsResult1) {
-                                    restaurantDetailsList.add(restaurantDetailsResult1);
-                                    restaurantDetailsMediatorLiveData.setValue(restaurantDetailsResult1);
+                            restaurantDetailsResponseRepository.getRestaurantDetailsLiveData(placeId), restaurantDetailsResult1 -> {
+                                restaurantDetailsList.add(restaurantDetailsResult1);
+                                restaurantDetailsMediatorLiveData.setValue(restaurantDetailsResult1);
 
-                                }
                             });
                 }
             }
