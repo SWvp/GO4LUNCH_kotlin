@@ -58,7 +58,7 @@ class MainActivityViewModel constructor(
 
     // WHEN PERMISSION IS GRANTED, RETRIEVE USER LOCATION
     private fun permissionGranted() {
-        locationRepository.StartLocationRequest()
+        locationRepository.startLocationRequest()
     }
 
     // WHEN CLICKING ON SEARCH VIEW WE PASSED THE TEXT TO USE CASE AND THEN OBSERVE IT

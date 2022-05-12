@@ -1,58 +1,45 @@
-package com.kardabel.go4lunch.domain.repository;
+package com.kardabel.go4lunch.domain.repository
 
-import android.app.Application;
+import android.app.Application
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import com.kardabel.go4lunch.BuildConfig
+import com.kardabel.go4lunch.R
+import com.kardabel.go4lunch.data.retrofit.GoogleMapsApi
+import com.kardabel.go4lunch.domain.pojo.Predictions
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
-import androidx.annotation.NonNull;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
+class AutocompleteRepository(
+    private val googleMapsApi: GoogleMapsApi,
+    private val application: Application,
+) {
+    fun getAutocompleteResultListLiveData(
+        location: String?,
+        input: String?,
+    ): LiveData<Predictions?> {
 
-import com.kardabel.go4lunch.BuildConfig;
-import com.kardabel.go4lunch.R;
-import com.kardabel.go4lunch.domain.pojo.Predictions;
-import com.kardabel.go4lunch.data.retrofit.GoogleMapsApi;
+        val key = BuildConfig.GOOGLE_PLACES_KEY
+        val type = application.getString(R.string.autocomplete_type)
+        val radius = application.getString(R.string.radius)
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+        val autocompleteResultMutableLiveData = MutableLiveData<Predictions?>()
 
-public class AutocompleteRepository {
-
-    private final GoogleMapsApi googleMapsApi;
-    private final Application application;
-
-    public AutocompleteRepository(
-            GoogleMapsApi googleMapsApi,
-            Application application) {
-        this.googleMapsApi = googleMapsApi;
-        this.application = application;
-
-    }
-
-    public LiveData<Predictions> getAutocompleteResultListLiveData(String location,
-                                                                   String input) {
-
-        String key = BuildConfig.GOOGLE_PLACES_KEY;
-        String type = application.getString(R.string.autocomplete_type);
-        String radius = application.getString(R.string.radius);
-
-        MutableLiveData<Predictions> AutocompleteResultMutableLiveData = new MutableLiveData<>();
-
-        googleMapsApi.autocompleteResult(key, type, location, radius, input).enqueue(
-                new Callback<Predictions>() {
-                    @Override
-                    public void onResponse(@NonNull Call<Predictions> call, @NonNull Response<Predictions> response) {
-                        if (response.body() != null) {
-                            AutocompleteResultMutableLiveData.setValue(response.body());
-
-                        }
+        googleMapsApi.autocompleteResult(key, type, location, radius, input)!!.enqueue(
+            object : Callback<Predictions?> {
+                override fun onResponse(
+                    call: Call<Predictions?>,
+                    response: Response<Predictions?>,
+                ) {
+                    if (response.body() != null) {
+                        autocompleteResultMutableLiveData.value = response.body()
                     }
-                    @Override
-                    public void onFailure(@NonNull Call<Predictions> call, @NonNull Throwable t) {
-                        t.printStackTrace();
-
-                    }
-                });
-        return AutocompleteResultMutableLiveData;
-
+                }
+                override fun onFailure(call: Call<Predictions?>, t: Throwable) {
+                    t.printStackTrace()
+                }
+            })
+        return autocompleteResultMutableLiveData
     }
 }

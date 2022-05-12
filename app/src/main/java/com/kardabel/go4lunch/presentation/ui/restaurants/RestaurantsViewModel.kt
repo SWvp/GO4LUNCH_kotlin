@@ -32,7 +32,7 @@ class RestaurantsViewModel constructor(
     private val clock: Clock
 ) : ViewModel() {
 
-    private var locationLiveData: LiveData<Location> = locationRepository.locationLiveData
+    private var locationLiveData: LiveData<Location> = locationRepository.getLocationLiveData()
     private var nearbySearchResultsLiveData: LiveData<NearbySearchResults> =
         getNearbySearchResultsUseCase.invoke()
     private var restaurantsDetailsResultLiveData: LiveData<List<RestaurantDetailsResult>> =

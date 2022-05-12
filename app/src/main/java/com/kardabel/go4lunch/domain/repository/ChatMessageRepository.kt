@@ -1,64 +1,53 @@
-package com.kardabel.go4lunch.domain.repository;
+package com.kardabel.go4lunch.domain.repository
 
-import android.util.Log;
+import android.util.Log
+import androidx.lifecycle.LiveData
+import com.kardabel.go4lunch.domain.model.ChatMessageModel
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import androidx.lifecycle.MutableLiveData
+import com.google.firebase.firestore.DocumentChange
+import com.google.firebase.firestore.QuerySnapshot
+import com.google.firebase.firestore.FirebaseFirestoreException
+import java.util.*
 
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
+class ChatMessageRepository {
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentChange;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.kardabel.go4lunch.domain.model.ChatMessageModel;
+    companion object {
+        const val COLLECTION_CHAT = "chat"
+    }
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-
-public class ChatMessageRepository {
-
-    public static final String COLLECTION_CHAT = "chat";
-
-    public LiveData<List<ChatMessageModel>> getChatMessages(String workmateId) {
-
-        String userId = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-        MutableLiveData<List<ChatMessageModel>> chatMessagesMutableLiveData = new MutableLiveData<>();
-
-        Set<ChatMessageModel> chatMessages = new HashSet<>();
+    fun getChatMessages(workmateId: String): LiveData<List<ChatMessageModel>> {
+        val userId = FirebaseAuth.getInstance().currentUser!!.uid
+        val db = FirebaseFirestore.getInstance()
+        val chatMessagesMutableLiveData = MutableLiveData<List<ChatMessageModel>>()
+        val chatMessages: MutableSet<ChatMessageModel> = HashSet()
 
         // CREATE A LIST OF USER TO SORT THEM,
         // IT WILL GIVE THE INDEX FOR DOCUMENT AND COLLECTION
-        List<String> ids = new ArrayList<>();
-        ids.add(userId);
-        ids.add(workmateId);
-        Collections.sort(ids);
+        val ids: MutableList<String> = ArrayList()
+        ids.add(userId)
+        ids.add(workmateId)
+        ids.sort()
 
+        // LISTEN THE CHAT COLLECTION
         db.collection(COLLECTION_CHAT)
-                .document(ids.get(0) + "_" + ids.get(1))
-                .collection(ids.get(0) + "_" + ids.get(1))
-                .addSnapshotListener((value, error) -> {
-                    if (error != null) {
-                        Log.e("messages error", error.getMessage());
-                        return;
+            .document(ids[0] + "_" + ids[1])
+            .collection(ids[0] + "_" + ids[1])
+            .addSnapshotListener { value: QuerySnapshot?, error: FirebaseFirestoreException? ->
+                if (error != null) {
+                    Log.e("messages error", error.message!!)
+                    return@addSnapshotListener
+                }
+                assert(value != null)
+                for (document in value!!.documentChanges) {
+                    if (document.type == DocumentChange.Type.ADDED) {
+                        chatMessages.add(document.document.toObject(ChatMessageModel::class.java))
                     }
-
-                    assert value != null;
-                    for (DocumentChange document : value.getDocumentChanges()) {
-                        if (document.getType() == DocumentChange.Type.ADDED) {
-
-                            chatMessages.add(document.getDocument().toObject(ChatMessageModel.class));
-
-                        }
-                    }
-                    List<ChatMessageModel> chatMessageModels = new ArrayList<>(chatMessages);
-                    chatMessagesMutableLiveData.setValue(chatMessageModels);
-
-                });
-        return chatMessagesMutableLiveData;
-
+                }
+                val chatMessageModels: List<ChatMessageModel> = ArrayList(chatMessages)
+                chatMessagesMutableLiveData.setValue(chatMessageModels)
+            }
+        return chatMessagesMutableLiveData
     }
 }

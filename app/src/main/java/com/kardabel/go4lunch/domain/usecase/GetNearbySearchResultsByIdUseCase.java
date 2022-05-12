@@ -13,11 +13,9 @@ import com.kardabel.go4lunch.domain.repository.NearbySearchResponseRepository;
 public class GetNearbySearchResultsByIdUseCase {
 
     public static final String RESTAURANT = "restaurant";
-    //public static final String RADIUS = "1000";
     private final LocationRepository locationRepository;
     private final NearbySearchResponseRepository nearbySearchResponseRepository;
     private final Application application;
-
 
     // RETRIEVE NEARBY RESULTS FROM LOCATION
     public GetNearbySearchResultsByIdUseCase(
@@ -28,9 +26,7 @@ public class GetNearbySearchResultsByIdUseCase {
         this.locationRepository = locationRepository;
         this.nearbySearchResponseRepository = nearbySearchResponseRepository;
         this.application = application;
-
     }
-
 
     public LiveData<Restaurant> invoke(String placeId) {
         return Transformations.switchMap(locationRepository.getLocationLiveData(), input -> {
@@ -43,7 +39,6 @@ public class GetNearbySearchResultsByIdUseCase {
                         for (Restaurant restaurant : nearbySearchResults.getResults()) {
                             if (restaurant.getRestaurantId().equals(placeId)) {
                                 return restaurant;
-
                             }
                         }
                         return null;

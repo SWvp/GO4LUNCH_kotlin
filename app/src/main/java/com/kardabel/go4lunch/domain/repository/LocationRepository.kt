@@ -1,60 +1,58 @@
-package com.kardabel.go4lunch.domain.repository;
+package com.kardabel.go4lunch.domain.repository
 
+import android.annotation.SuppressLint
+import android.location.Location
+import android.os.Looper
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.LocationServices
+import com.kardabel.go4lunch.MainApplication
 
-import android.annotation.SuppressLint;
-import android.location.Location;
-import android.os.Looper;
+class LocationRepository {
 
-import androidx.annotation.NonNull;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-
-import com.google.android.gms.location.LocationCallback;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationResult;
-import com.google.android.gms.location.LocationServices;
-import com.kardabel.go4lunch.MainApplication;
-
-public class LocationRepository {
-
-    public static final int DEFAULT_UPDATE_INTERVAL = 50000;
-    public static final int FASTEST_UPDATE_INTERVAL = 20000;
-    private final MutableLiveData<Location> locationMutableLiveData = new MutableLiveData<>();
-    private LocationCallback callback;
+    // CHANGE CONST TO ADAPT LOCATION REFRESH
+    companion object {
+        const val DEFAULT_UPDATE_INTERVAL = 50000
+        const val FASTEST_UPDATE_INTERVAL = 20000
+    }
+    private val locationMutableLiveData = MutableLiveData<Location>()
+    private var callback: LocationCallback? = null
 
     @SuppressLint("MissingPermission")
-    public void StartLocationRequest() {
+    fun startLocationRequest() {
         if (callback == null) {
-            callback = new LocationCallback() {
-                @Override
-                public void onLocationResult(@NonNull LocationResult locationResult) {
-                    Location location = locationResult.getLastLocation();
-                    locationMutableLiveData.setValue(location);
-
+            callback = object : LocationCallback() {
+                override fun onLocationResult(locationResult: LocationResult) {
+                    val location = locationResult.lastLocation
+                    locationMutableLiveData.value = location
                 }
-            };
-            LocationServices.getFusedLocationProviderClient(MainApplication.getApplication()).requestLocationUpdates(
+            }
+            LocationServices.getFusedLocationProviderClient(MainApplication.getApplication())
+                .requestLocationUpdates(
                     LocationRequest.create()
-                            .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                            .setInterval(DEFAULT_UPDATE_INTERVAL)
-                            .setFastestInterval(FASTEST_UPDATE_INTERVAL)
-                            .setSmallestDisplacement(50),
-                    callback,
+                        .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                        .setInterval(DEFAULT_UPDATE_INTERVAL.toLong())
+                        .setFastestInterval(FASTEST_UPDATE_INTERVAL.toLong())
+                        .setSmallestDisplacement(50f),
+                    callback as LocationCallback,
                     Looper.getMainLooper()
-
-            );
+                )
         }
     }
 
-    public void StopLocationRequest(){
-        if(callback != null) {
-            LocationServices.getFusedLocationProviderClient(MainApplication.getApplication()).removeLocationUpdates(callback);
-            callback = null;
-
+    fun StopLocationRequest() {
+        if (callback != null) {
+            LocationServices.getFusedLocationProviderClient(MainApplication.getApplication())
+                .removeLocationUpdates(
+                    callback!!)
+            callback = null
         }
     }
-    public LiveData<Location> getLocationLiveData() {
-        return locationMutableLiveData;
-    }
 
+    fun getLocationLiveData(): LiveData<Location> {
+        return locationMutableLiveData
+    }
 }

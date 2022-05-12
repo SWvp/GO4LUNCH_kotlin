@@ -23,7 +23,7 @@ class MapViewModel constructor(
         private const val ZOOM_FOCUS = 15f
     }
 
-    private var locationLiveData: LiveData<Location> = locationRepository.locationLiveData
+    private var locationLiveData: LiveData<Location> = locationRepository.getLocationLiveData()
     private var nearbySearchResultsLiveData: LiveData<NearbySearchResults> = getNearbySearchResultsUseCase.invoke()
     private var workmatesWhoMadeRestaurantChoiceLiveData: LiveData<MutableList<UserWhoMadeRestaurantChoice>> = usersWhoMadeRestaurantChoiceRepository.workmatesWhoMadeRestaurantChoice
     private var usersSearchLiveData: LiveData<String> = userSearchRepository.usersSearchLiveData

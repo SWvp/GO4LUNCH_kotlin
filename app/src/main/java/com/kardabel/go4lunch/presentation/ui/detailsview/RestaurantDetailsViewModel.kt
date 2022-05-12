@@ -46,7 +46,7 @@ class RestaurantDetailsViewModel constructor(
         val workmatesWhoMadeRestaurantChoiceLiveData: LiveData<List<UserWhoMadeRestaurantChoice>> =
             usersWhoMadeRestaurantChoiceRepository.workmatesWhoMadeRestaurantChoice
         val favoriteRestaurantsLiveData: LiveData<List<FavoriteRestaurant>> =
-            favoriteRestaurantsRepository.favoriteRestaurants
+            favoriteRestaurantsRepository.getFavoriteRestaurants()
         val workMatesLiveData: LiveData<List<UserModel>> = workmatesRepository.workmates
 
 
