@@ -33,20 +33,18 @@ class UsersWhoMadeRestaurantChoiceRepository(
                 }
                 assert(value != null)
                 for (document in value!!.documentChanges) {
+
                     Log.d("pipo",
-                        "onEvent() called with: value = [" + document.document
-                            .toObject(UserWhoMadeRestaurantChoice::class.java) + "], error = [" + null + "]")
+                        "onEvent() called with: value = [" + document.document.toObject(UserWhoMadeRestaurantChoice::class.java) + "], error = [" + null + "]")
+
                     when (document.type) {
                         DocumentChange.Type.ADDED -> {
-                            usersWithRestaurant.add(document.document.toObject(UserWhoMadeRestaurantChoice::class.java))
+                            usersWithRestaurant.add(document.document.toObject(
+                                UserWhoMadeRestaurantChoice::class.java))
                         }
                         DocumentChange.Type.MODIFIED -> {
-                            for (i in usersWithRestaurant.indices) {
-                                if (usersWithRestaurant[i].userId == document.document
-                                        .toObject(UserWhoMadeRestaurantChoice::class.java).userId
-                                ) {
-                                    usersWithRestaurant.remove(usersWithRestaurant[i])
-                                }
+                            usersWithRestaurant.removeIf { user ->
+                                user.userId == document.document.toObject(UserWhoMadeRestaurantChoice::class.java).userId
                             }
                             usersWithRestaurant.add(document.document.toObject(UserWhoMadeRestaurantChoice::class.java))
                         }
