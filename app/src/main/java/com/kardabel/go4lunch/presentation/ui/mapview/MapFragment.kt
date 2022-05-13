@@ -42,9 +42,8 @@ class MapFragment : SupportMapFragment(), OnMapReadyCallback, GoogleMap.OnMarker
         ) {
 
             // CONFIGURE MAPVIEWMODEL
-            val mapViewModelFactory = ViewModelFactory.getInstance()
-            val mapViewModel = ViewModelProvider(this, mapViewModelFactory).get(
-                MapViewModel::class.java)
+            val viewModelFactory = ViewModelFactory.instance
+            val mapViewModel = ViewModelProvider(this, viewModelFactory!!)[MapViewModel::class.java]
 
             // SET USER LOCATION AND THEN POI
             setUserLocation(mapViewModel, googleMap)

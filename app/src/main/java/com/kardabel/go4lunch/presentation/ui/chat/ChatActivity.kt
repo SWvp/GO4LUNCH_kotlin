@@ -61,9 +61,9 @@ class ChatActivity : AppCompatActivity() {
     }
 
     private fun manageViewModel() {
-        val viewModelFactory = ViewModelFactory.getInstance()
+        val viewModelFactory = ViewModelFactory.instance
         viewModel =
-            ViewModelProvider(this, viewModelFactory)[ChatViewModel::class.java]
+            ViewModelProvider(this, viewModelFactory!!)[ChatViewModel::class.java]
 
         intent.getStringExtra(WORKMATE_ID)?.let { viewModel.init(it) }
     }

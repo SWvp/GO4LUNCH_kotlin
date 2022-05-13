@@ -40,9 +40,9 @@ class RestaurantDetailsActivity : AppCompatActivity() {
 
     private fun manageViewModel() {
 
-        val viewModelFactory = ViewModelFactory.getInstance()
+        val viewModelFactory = ViewModelFactory.instance
         viewModel =
-            ViewModelProvider(this, viewModelFactory)[RestaurantDetailsViewModel::class.java]
+            ViewModelProvider(this, viewModelFactory!!)[RestaurantDetailsViewModel::class.java]
 
         intent.getStringExtra(RESTAURANT_ID)?.let { viewModel.init(it) }
     }

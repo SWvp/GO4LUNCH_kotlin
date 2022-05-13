@@ -36,9 +36,9 @@ class WorkMatesFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         // INIT RESTAURANT VIEWMODEL
-        val workmatesViewModelFactory = ViewModelFactory.getInstance()
+        val viewModelFactory = ViewModelFactory.instance
         val workMatesViewModel =
-            ViewModelProvider(this, workmatesViewModelFactory)[WorkMatesViewModel::class.java]
+            ViewModelProvider(this, viewModelFactory!!)[WorkMatesViewModel::class.java]
 
         // CONFIGURE RECYCLERVIEW
         val adapter = WorkMatesRecyclerViewAdapter { workmate ->

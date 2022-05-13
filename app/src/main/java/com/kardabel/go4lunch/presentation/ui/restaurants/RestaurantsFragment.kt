@@ -39,8 +39,8 @@ class RestaurantsFragment: Fragment() {
 
 
         // INIT RESTAURANT VIEWMODEL
-        val restaurantsViewModelFactory = ViewModelFactory.getInstance()
-        val restaurantsViewModel = ViewModelProvider(this, restaurantsViewModelFactory)[RestaurantsViewModel::class.java]
+        val viewModelFactory = ViewModelFactory.instance
+        val restaurantsViewModel = ViewModelProvider(this, viewModelFactory!!)[RestaurantsViewModel::class.java]
 
         val adapter = RestaurantsAdapter { restaurantId ->
             startActivity(Intent(RestaurantDetailsActivity.navigate(requireContext(), restaurantId)))

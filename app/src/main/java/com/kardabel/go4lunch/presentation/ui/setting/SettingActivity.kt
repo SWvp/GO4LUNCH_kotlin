@@ -24,8 +24,8 @@ class SettingActivity : AppCompatActivity() {
     }
 
     private fun manageViewModel() {
-        val viewModelFactory = ViewModelFactory.getInstance()
-        val viewModel = ViewModelProvider(this, viewModelFactory)[SettingViewModel::class.java]
+        val viewModelFactory = ViewModelFactory.instance
+        val viewModel = ViewModelProvider(this, viewModelFactory!!)[SettingViewModel::class.java]
 
         viewModel.getSwitchPosition.observe(this) { switchPosition ->
 

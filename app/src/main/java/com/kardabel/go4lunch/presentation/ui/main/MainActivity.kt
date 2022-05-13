@@ -63,9 +63,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         setContentView(binding.root)
 
         // CONFIGURE VIEWMODEL
-        val listViewModelFactory = ViewModelFactory.getInstance()
+        val viewModelFactory = ViewModelFactory.instance
         mainActivityViewModel =
-            ViewModelProvider(this, listViewModelFactory)[MainActivityViewModel::class.java]
+            ViewModelProvider(this, viewModelFactory!!)[MainActivityViewModel::class.java]
 
         drawerLayout = binding.drawerLayout
 

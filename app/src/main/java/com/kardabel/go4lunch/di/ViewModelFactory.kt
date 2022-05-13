@@ -1,199 +1,170 @@
-package com.kardabel.go4lunch.di;
+package com.kardabel.go4lunch.di
 
-import android.app.Application;
-import android.content.Context;
+import android.annotation.SuppressLint
+import android.app.Application
+import android.content.Context
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.kardabel.go4lunch.MainApplication
+import com.kardabel.go4lunch.data.retrofit.GoogleMapsApi
+import com.kardabel.go4lunch.domain.repository.*
+import com.kardabel.go4lunch.domain.usecase.*
+import com.kardabel.go4lunch.presentation.ui.chat.ChatViewModel
+import com.kardabel.go4lunch.presentation.ui.detailsview.RestaurantDetailsViewModel
+import com.kardabel.go4lunch.presentation.ui.main.MainActivityViewModel
+import com.kardabel.go4lunch.presentation.ui.mapview.MapViewModel
+import com.kardabel.go4lunch.presentation.ui.restaurants.RestaurantsViewModel
+import com.kardabel.go4lunch.presentation.ui.setting.SettingViewModel
+import com.kardabel.go4lunch.presentation.ui.workmates.WorkMatesViewModel
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import java.lang.IllegalArgumentException
+import java.time.Clock
 
-import androidx.annotation.NonNull;
-import androidx.lifecycle.ViewModel;
-import androidx.lifecycle.ViewModelProvider;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.kardabel.go4lunch.presentation.ui.main.MainActivityViewModel;
-import com.kardabel.go4lunch.MainApplication;
-import com.kardabel.go4lunch.domain.repository.AutocompleteRepository;
-import com.kardabel.go4lunch.domain.repository.ChatMessageRepository;
-import com.kardabel.go4lunch.domain.repository.FavoriteRestaurantsRepository;
-import com.kardabel.go4lunch.domain.repository.LocationRepository;
-import com.kardabel.go4lunch.domain.repository.NearbySearchResponseRepository;
-import com.kardabel.go4lunch.domain.repository.NotificationsRepository;
-import com.kardabel.go4lunch.domain.repository.RestaurantDetailsResponseRepository;
-import com.kardabel.go4lunch.domain.repository.UserSearchRepository;
-import com.kardabel.go4lunch.domain.repository.UsersWhoMadeRestaurantChoiceRepository;
-import com.kardabel.go4lunch.domain.repository.WorkmatesRepository;
-import com.kardabel.go4lunch.data.retrofit.GoogleMapsApi;
-import com.kardabel.go4lunch.presentation.ui.chat.ChatViewModel;
-import com.kardabel.go4lunch.presentation.ui.detailsview.RestaurantDetailsViewModel;
-import com.kardabel.go4lunch.presentation.ui.mapview.MapViewModel;
-import com.kardabel.go4lunch.presentation.ui.restaurants.RestaurantsViewModel;
-import com.kardabel.go4lunch.presentation.ui.setting.SettingViewModel;
-import com.kardabel.go4lunch.presentation.ui.workmates.WorkMatesViewModel;
-import com.kardabel.go4lunch.domain.usecase.AddChatMessageToFirestoreUseCase;
-import com.kardabel.go4lunch.domain.usecase.ClickOnChoseRestaurantButtonUseCase;
-import com.kardabel.go4lunch.domain.usecase.ClickOnFavoriteRestaurantUseCase;
-import com.kardabel.go4lunch.domain.usecase.GetCurrentUserIdUseCase;
-import com.kardabel.go4lunch.domain.usecase.GetNearbySearchResultsByIdUseCase;
-import com.kardabel.go4lunch.domain.usecase.GetNearbySearchResultsUseCase;
-import com.kardabel.go4lunch.domain.usecase.GetPredictionsUseCase;
-import com.kardabel.go4lunch.domain.usecase.GetRestaurantDetailsResultsByIdUseCase;
-import com.kardabel.go4lunch.domain.usecase.GetRestaurantDetailsResultsUseCase;
+@Suppress("UNCHECKED_CAST")
+class ViewModelFactory: ViewModelProvider.Factory {
 
-import java.time.Clock;
+    private val application: Application
+    private val context: Context
+    private val locationRepository: LocationRepository
+    private val workmatesRepository: WorkmatesRepository
+    private val mUserSearchRepository: UserSearchRepository
+    private val favoriteRestaurantsRepository: FavoriteRestaurantsRepository
+    private val mUsersWhoMadeRestaurantChoiceRepository: UsersWhoMadeRestaurantChoiceRepository
+    private val chatMessageRepository: ChatMessageRepository
+    private val notificationsRepository: NotificationsRepository
+    private val getNearbySearchResultsUseCase: GetNearbySearchResultsUseCase
+    private val getNearbySearchResultsByIdUseCase: GetNearbySearchResultsByIdUseCase
+    private val getRestaurantDetailsResultsUseCase: GetRestaurantDetailsResultsUseCase
+    private val getRestaurantDetailsResultsByIdUseCase: GetRestaurantDetailsResultsByIdUseCase
+    private val getPredictionsUseCase: GetPredictionsUseCase
+    private val getCurrentUserIdUseCase: GetCurrentUserIdUseCase
+    private val addChatMessageToFirestoreUseCase: AddChatMessageToFirestoreUseCase
+    private val clickOnChoseRestaurantButtonUseCase: ClickOnChoseRestaurantButtonUseCase
+    private val clickOnFavoriteRestaurantUseCase: ClickOnFavoriteRestaurantUseCase
 
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
-public class ViewModelFactory implements ViewModelProvider.Factory {
-
-    private static ViewModelFactory factory;
-    private final Application application;
-    private final Context context;
-
-    private final LocationRepository locationRepository;
-    private final WorkmatesRepository workmatesRepository;
-    private final UserSearchRepository mUserSearchRepository;
-    private final FavoriteRestaurantsRepository favoriteRestaurantsRepository;
-    private final UsersWhoMadeRestaurantChoiceRepository mUsersWhoMadeRestaurantChoiceRepository;
-    private final ChatMessageRepository chatMessageRepository;
-    private final NotificationsRepository notificationsRepository;
-
-    private final GetNearbySearchResultsUseCase getNearbySearchResultsUseCase;
-    private final GetNearbySearchResultsByIdUseCase getNearbySearchResultsByIdUseCase;
-    private final GetRestaurantDetailsResultsUseCase getRestaurantDetailsResultsUseCase;
-    private final GetRestaurantDetailsResultsByIdUseCase getRestaurantDetailsResultsByIdUseCase;
-    private final GetPredictionsUseCase getPredictionsUseCase;
-    private final GetCurrentUserIdUseCase getCurrentUserIdUseCase;
-    private final AddChatMessageToFirestoreUseCase addChatMessageToFirestoreUseCase;
-    private final ClickOnChoseRestaurantButtonUseCase clickOnChoseRestaurantButtonUseCase;
-    private final ClickOnFavoriteRestaurantUseCase clickOnFavoriteRestaurantUseCase;
-
-    public static ViewModelFactory getInstance() {
-        if (factory == null) {
-            synchronized (ViewModelFactory.class) {
+    companion object {
+        @SuppressLint("StaticFieldLeak")
+        private var factory: ViewModelFactory? = null
+        val instance: ViewModelFactory?
+            get() {
                 if (factory == null) {
-                    factory = new ViewModelFactory();
-
+                    synchronized(ViewModelFactory::class.java) {
+                        if (factory == null) {
+                            factory = ViewModelFactory()
+                        }
+                    }
                 }
+                return factory
             }
-        }
-        return factory;
-
     }
 
-    public ViewModelFactory() {
+    init {
 
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://maps.googleapis.com/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
+        val retrofit = Retrofit.Builder()
+            .baseUrl("https://maps.googleapis.com/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
 
-        GoogleMapsApi googleMapsApi = retrofit.create(GoogleMapsApi.class);
+        val googleMapsApi = retrofit.create(GoogleMapsApi::class.java)
 
-        FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
+        val firebaseFirestore = FirebaseFirestore.getInstance()
 
-        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        val firebaseAuth = FirebaseAuth.getInstance()
 
-        this.application = MainApplication.getApplication();
-        this.context = application.getApplicationContext();
+        application = MainApplication.getApplication()
 
-        NearbySearchResponseRepository nearbySearchResponseRepository =
-                new NearbySearchResponseRepository(
-                        googleMapsApi
-                );
-        RestaurantDetailsResponseRepository restaurantDetailsResponseRepository =
-                new RestaurantDetailsResponseRepository(
-                        googleMapsApi,
-                        application);
-        AutocompleteRepository autocompleteRepository =
-                new AutocompleteRepository(
-                        googleMapsApi,
-                        application);
-        this.locationRepository =
-                new LocationRepository();
-        this.workmatesRepository =
-                new WorkmatesRepository();
-        this.mUserSearchRepository =
-                new UserSearchRepository();
-        this.favoriteRestaurantsRepository =
-                new FavoriteRestaurantsRepository();
-        this.mUsersWhoMadeRestaurantChoiceRepository =
-                new UsersWhoMadeRestaurantChoiceRepository(Clock.systemDefaultZone());
-        this.chatMessageRepository =
-                new ChatMessageRepository();
-        this.notificationsRepository =
-                new NotificationsRepository(context);
+        context = application.applicationContext
 
-        this.getNearbySearchResultsUseCase =
-                new GetNearbySearchResultsUseCase(
-                        locationRepository,
-                        nearbySearchResponseRepository,
-                        application);
-        this.getNearbySearchResultsByIdUseCase =
-                new GetNearbySearchResultsByIdUseCase(
-                        locationRepository,
-                        nearbySearchResponseRepository,
-                        application);
-        this.getRestaurantDetailsResultsUseCase =
-                new GetRestaurantDetailsResultsUseCase(
-                        locationRepository,
-                        nearbySearchResponseRepository,
-                        restaurantDetailsResponseRepository,
-                        application);
-        this.getRestaurantDetailsResultsByIdUseCase =
-                new GetRestaurantDetailsResultsByIdUseCase(
-                        restaurantDetailsResponseRepository
-                );
-        this.getPredictionsUseCase =
-                new GetPredictionsUseCase(
-                        locationRepository,
-                        autocompleteRepository);
-        this.getCurrentUserIdUseCase =
-                new GetCurrentUserIdUseCase();
-        this.addChatMessageToFirestoreUseCase =
-                new AddChatMessageToFirestoreUseCase(
-                        firebaseFirestore,
-                        firebaseAuth,
-                        Clock.systemDefaultZone());
-        this.clickOnChoseRestaurantButtonUseCase =
-                new ClickOnChoseRestaurantButtonUseCase(
-                        firebaseFirestore,
-                        firebaseAuth,
-                        Clock.systemDefaultZone());
-        this.clickOnFavoriteRestaurantUseCase =
-                new ClickOnFavoriteRestaurantUseCase(firebaseFirestore);
+        val nearbySearchResponseRepository = NearbySearchResponseRepository(
+            googleMapsApi
+        )
+
+        val restaurantDetailsResponseRepository = RestaurantDetailsResponseRepository(
+            googleMapsApi,
+            application)
+
+        val autocompleteRepository = AutocompleteRepository(
+            googleMapsApi,
+            application)
+
+        locationRepository = LocationRepository()
+        workmatesRepository = WorkmatesRepository()
+        mUserSearchRepository = UserSearchRepository()
+        favoriteRestaurantsRepository = FavoriteRestaurantsRepository()
+        mUsersWhoMadeRestaurantChoiceRepository =
+            UsersWhoMadeRestaurantChoiceRepository(Clock.systemDefaultZone())
+        chatMessageRepository = ChatMessageRepository()
+        notificationsRepository = NotificationsRepository(context)
+        getNearbySearchResultsUseCase = GetNearbySearchResultsUseCase(
+            locationRepository,
+            nearbySearchResponseRepository,
+            application)
+        getNearbySearchResultsByIdUseCase = GetNearbySearchResultsByIdUseCase(
+            locationRepository,
+            nearbySearchResponseRepository,
+            application)
+        getRestaurantDetailsResultsUseCase = GetRestaurantDetailsResultsUseCase(
+            locationRepository,
+            nearbySearchResponseRepository,
+            restaurantDetailsResponseRepository,
+            application)
+        getRestaurantDetailsResultsByIdUseCase = GetRestaurantDetailsResultsByIdUseCase(
+            restaurantDetailsResponseRepository
+        )
+        getPredictionsUseCase = GetPredictionsUseCase(
+            locationRepository,
+            autocompleteRepository)
+        getCurrentUserIdUseCase = GetCurrentUserIdUseCase()
+        addChatMessageToFirestoreUseCase = AddChatMessageToFirestoreUseCase(
+            firebaseFirestore,
+            firebaseAuth,
+            Clock.systemDefaultZone())
+        clickOnChoseRestaurantButtonUseCase = ClickOnChoseRestaurantButtonUseCase(
+            firebaseFirestore,
+            firebaseAuth,
+            Clock.systemDefaultZone())
+        clickOnFavoriteRestaurantUseCase = ClickOnFavoriteRestaurantUseCase(firebaseFirestore)
     }
 
 
-    // CREATE INSTANCE FOR EACH VIEWMODEL
-    @NonNull
-    @Override
-    public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-        if (modelClass.isAssignableFrom(RestaurantsViewModel.class)) {
-            return (T) new RestaurantsViewModel(
+
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+
+        when {
+            modelClass.isAssignableFrom(RestaurantsViewModel::class.java) -> {
+                return RestaurantsViewModel(
                     application,
                     locationRepository,
                     getNearbySearchResultsUseCase,
                     getRestaurantDetailsResultsUseCase,
                     mUsersWhoMadeRestaurantChoiceRepository,
                     mUserSearchRepository,
-                    Clock.systemDefaultZone());
-        } else if (modelClass.isAssignableFrom(MapViewModel.class)) {
-            return (T) new MapViewModel(
+                    Clock.systemDefaultZone()) as T
+            }
+            modelClass.isAssignableFrom(MapViewModel::class.java) -> {
+                return MapViewModel(
                     locationRepository,
                     getNearbySearchResultsUseCase,
                     mUsersWhoMadeRestaurantChoiceRepository,
-                    mUserSearchRepository);
-        } else if (modelClass.isAssignableFrom(MainActivityViewModel.class)) {
-            return (T) new MainActivityViewModel(
+                    mUserSearchRepository) as T
+            }
+            modelClass.isAssignableFrom(MainActivityViewModel::class.java) -> {
+                return MainActivityViewModel(
                     application,
                     locationRepository,
                     getPredictionsUseCase,
                     mUserSearchRepository,
                     mUsersWhoMadeRestaurantChoiceRepository,
                     getCurrentUserIdUseCase
-            );
-        } else if (modelClass.isAssignableFrom(RestaurantDetailsViewModel.class)) {
-            return (T) new RestaurantDetailsViewModel(
+                ) as T
+            }
+            modelClass.isAssignableFrom(RestaurantDetailsViewModel::class.java) -> {
+                return RestaurantDetailsViewModel(
                     application,
                     getNearbySearchResultsByIdUseCase,
                     getRestaurantDetailsResultsByIdUseCase,
@@ -202,26 +173,30 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
                     favoriteRestaurantsRepository,
                     getCurrentUserIdUseCase,
                     clickOnChoseRestaurantButtonUseCase,
-                    clickOnFavoriteRestaurantUseCase);
-        } else if (modelClass.isAssignableFrom(WorkMatesViewModel.class)) {
-            return (T) new WorkMatesViewModel(
+                    clickOnFavoriteRestaurantUseCase) as T
+            }
+            modelClass.isAssignableFrom(WorkMatesViewModel::class.java) -> {
+                return WorkMatesViewModel(
                     application,
                     workmatesRepository,
                     mUsersWhoMadeRestaurantChoiceRepository
-            );
-        } else if (modelClass.isAssignableFrom(ChatViewModel.class)) {
-            return (T) new ChatViewModel(
+                ) as T
+            }
+            modelClass.isAssignableFrom(ChatViewModel::class.java) -> {
+                return ChatViewModel(
                     chatMessageRepository,
                     getCurrentUserIdUseCase,
                     addChatMessageToFirestoreUseCase
-            );
-        } else if (modelClass.isAssignableFrom(SettingViewModel.class)) {
-            return (T) new SettingViewModel(
+                ) as T
+            }
+            modelClass.isAssignableFrom(SettingViewModel::class.java) -> {
+                return SettingViewModel(
                     notificationsRepository,
                     context,
                     Clock.systemDefaultZone()
-            );
+                ) as T
+            }
+            else -> throw IllegalArgumentException("Unknown ViewModel class")
         }
-        throw new IllegalArgumentException("Unknown ViewModel class");
     }
 }
