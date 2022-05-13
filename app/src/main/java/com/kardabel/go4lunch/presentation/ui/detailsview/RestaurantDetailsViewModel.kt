@@ -44,10 +44,10 @@ class RestaurantDetailsViewModel constructor(
         val restaurantDetailsLiveData: LiveData<RestaurantDetailsResult> =
             getRestaurantDetailsResultsByIdUseCase.invoke(placeId)
         val workmatesWhoMadeRestaurantChoiceLiveData: LiveData<List<UserWhoMadeRestaurantChoice>> =
-            usersWhoMadeRestaurantChoiceRepository.workmatesWhoMadeRestaurantChoice
+            usersWhoMadeRestaurantChoiceRepository.getWorkmatesWhoMadeRestaurantChoice()
         val favoriteRestaurantsLiveData: LiveData<List<FavoriteRestaurant>> =
             favoriteRestaurantsRepository.getFavoriteRestaurants()
-        val workMatesLiveData: LiveData<List<UserModel>> = workmatesRepository.workmates
+        val workMatesLiveData: LiveData<List<UserModel>> = workmatesRepository.getWorkmates()
 
 
         // OBSERVERS FOR RESTAURANT DETAILS

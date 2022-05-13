@@ -29,7 +29,7 @@ class SettingViewModel constructor(
 
     val actionSingleLiveEvent = SingleLiveEvent<PermissionsViewAction>()
 
-    val getSwitchPosition = notificationsRepository.isNotificationEnabledLiveData.map { switchPosition ->
+    val getSwitchPosition = notificationsRepository.isNotificationEnabledLiveData().map { switchPosition ->
 
         if (!switchPosition) {
 

@@ -22,9 +22,9 @@ class WorkMatesViewModel constructor(
     // HERE WE HAVE 2 COLLECTIONS TO OBSERVE:
     // ONE WITH ALL REGISTERED USERS
     // AND ONE WITH USERS (WORKMATES) WHO MADE A CHOICE
-    private var workMatesLiveData: LiveData<List<UserModel>> = workmatesRepository.workmates
+    private var workMatesLiveData: LiveData<List<UserModel>> = workmatesRepository.getWorkmates()
     private var workmatesWhoMadeChoiceLiveData: LiveData<List<UserWhoMadeRestaurantChoice>> =
-        usersWhoMadeRestaurantChoiceRepository.workmatesWhoMadeRestaurantChoice
+        usersWhoMadeRestaurantChoiceRepository.getWorkmatesWhoMadeRestaurantChoice()
 
     val workMatesViewStateMediatorLiveData =
         MediatorLiveData<List<WorkMateViewState>>().apply {

@@ -38,8 +38,8 @@ class RestaurantsViewModel constructor(
     private var restaurantsDetailsResultLiveData: LiveData<List<RestaurantDetailsResult>> =
         getRestaurantDetailsResultsUseCase.invoke()
     private var workmatesWhoMadeRestaurantChoiceLiveData: LiveData<List<UserWhoMadeRestaurantChoice>> =
-        usersWhoMadeRestaurantChoiceRepository.workmatesWhoMadeRestaurantChoice
-    private var usersSearchLiveData: LiveData<String> = userSearchRepository.usersSearchLiveData
+        usersWhoMadeRestaurantChoiceRepository.getWorkmatesWhoMadeRestaurantChoice()
+    private var usersSearchLiveData: LiveData<String> = userSearchRepository.getUsersSearchLiveData()
 
     val getRestaurantsWrapperViewStateMediatorLiveData =
         MediatorLiveData<RestaurantsWrapperViewState>().apply {

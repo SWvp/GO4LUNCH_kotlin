@@ -1,19 +1,18 @@
-package com.kardabel.go4lunch.domain.repository;
+package com.kardabel.go4lunch.domain.repository
 
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 
 
-public class UserSearchRepository {
+class UserSearchRepository {
 
-    private final MutableLiveData<String> searchViewResultLiveData = new MutableLiveData<>();
+    private val searchViewResultLiveData = MutableLiveData<String>()
 
-    public void usersSearch(String restaurantId) {
-
-        searchViewResultLiveData.setValue(restaurantId);
+    fun usersSearch(restaurantId: String) {
+        searchViewResultLiveData.value = restaurantId
     }
 
-    public LiveData<String> getUsersSearchLiveData() {
-        return searchViewResultLiveData;
+    fun getUsersSearchLiveData(): LiveData<String> {
+        return searchViewResultLiveData
     }
 }

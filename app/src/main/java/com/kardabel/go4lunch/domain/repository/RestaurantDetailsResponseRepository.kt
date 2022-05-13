@@ -1,74 +1,59 @@
-package com.kardabel.go4lunch.domain.repository;
+package com.kardabel.go4lunch.domain.repository
 
-import android.app.Application;
-import android.util.Log;
+import android.app.Application
+import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import com.kardabel.go4lunch.BuildConfig
+import com.kardabel.go4lunch.R
+import com.kardabel.go4lunch.data.retrofit.GoogleMapsApi
+import com.kardabel.go4lunch.domain.pojo.RestaurantDetailsResult
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
-import androidx.annotation.NonNull;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
+class RestaurantDetailsResponseRepository(
+    private val googleMapsApi: GoogleMapsApi,
+    private val application: Application,
+) {
 
-import com.kardabel.go4lunch.BuildConfig;
-import com.kardabel.go4lunch.R;
-import com.kardabel.go4lunch.domain.pojo.RestaurantDetailsResult;
-import com.kardabel.go4lunch.data.retrofit.GoogleMapsApi;
+    private val cache: MutableMap<String, RestaurantDetailsResult?> = HashMap(2000)
 
-import java.util.HashMap;
-import java.util.Map;
+    fun getRestaurantDetailsLiveData(restaurantId: String): LiveData<RestaurantDetailsResult?> {
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+        val key = BuildConfig.GOOGLE_PLACES_KEY
+        val FIELDS: String = application.getString(R.string.restaurant_details_fields)
 
-public class RestaurantDetailsResponseRepository {
+        val placeDetailsResultMutableLiveData = MutableLiveData<RestaurantDetailsResult?>()
 
-    private final GoogleMapsApi googleMapsApi;
-    private final  Application application;
+        val restaurantDetailsResult: RestaurantDetailsResult? = cache[restaurantId]
 
-    // THIS MAP WILL ALLOW DEVICE TO CACHE DATA TO AVOID USELESS DATA CALL
-    private final Map<String, RestaurantDetailsResult> cache = new HashMap<>(2000);
-
-    public RestaurantDetailsResponseRepository(GoogleMapsApi googleMapsApi, Application application) {
-        this.googleMapsApi = googleMapsApi;
-        this.application = application;
-    }
-
-    public LiveData<RestaurantDetailsResult> getRestaurantDetailsLiveData(String restaurantId) {
-
-        String key = BuildConfig.GOOGLE_PLACES_KEY;
-        String FIELDS = application.getString(R.string.restaurant_details_fields);
-
-        MutableLiveData<RestaurantDetailsResult> placeDetailsResultMutableLiveData =
-                new MutableLiveData<>();
-
-        RestaurantDetailsResult restaurantDetailsResult = cache.get(restaurantId);
         if (restaurantDetailsResult != null) {
 
-            placeDetailsResultMutableLiveData.setValue(restaurantDetailsResult);
+            placeDetailsResultMutableLiveData.value = restaurantDetailsResult
 
         } else {
 
-            Call<RestaurantDetailsResult> call = googleMapsApi.searchRestaurantDetails(key, restaurantId, FIELDS);
+            val call = googleMapsApi.searchRestaurantDetails(key, restaurantId, FIELDS)
 
-            call.enqueue(new Callback<RestaurantDetailsResult>() {
-                @Override
-                public void onResponse(@NonNull Call<RestaurantDetailsResult> call,
-                                       @NonNull Response<RestaurantDetailsResult> response) {
+            call!!.enqueue(object : Callback<RestaurantDetailsResult?> {
+                override fun onResponse(
+                    call: Call<RestaurantDetailsResult?>,
+                    response: Response<RestaurantDetailsResult?>,
+                ) {
                     if (response.body() != null) {
-                        cache.put(restaurantId, response.body());
-                        placeDetailsResultMutableLiveData.setValue(response.body());
-
-                    }else{
-                        Log.d("Response errorBody", String.valueOf(response.errorBody()));
+                        cache[restaurantId] = response.body()
+                        placeDetailsResultMutableLiveData.setValue(response.body())
+                    } else {
+                        Log.d("Response errorBody", response.errorBody().toString())
                     }
                 }
-                @Override
-                public void onFailure(@NonNull Call<RestaurantDetailsResult> call, @NonNull Throwable t) {
-                    Log.d("pipo", "Detail called issues");
 
+                override fun onFailure(call: Call<RestaurantDetailsResult?>, t: Throwable) {
+                    Log.d("pipo", "Detail called issues")
                 }
-            });
+            })
         }
-        return placeDetailsResultMutableLiveData;
-
+        return placeDetailsResultMutableLiveData
     }
 }

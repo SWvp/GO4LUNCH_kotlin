@@ -1,52 +1,50 @@
-package com.kardabel.go4lunch.domain.repository;
+package com.kardabel.go4lunch.domain.repository
 
-import static android.content.Context.MODE_PRIVATE;
+import android.content.Context
+import android.content.Context.MODE_PRIVATE
+import android.content.SharedPreferences
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 
-import android.content.Context;
-import android.content.SharedPreferences;
+class NotificationsRepository(
+    context: Context
+) {
 
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-
-public class NotificationsRepository {
-
-    public static final String REMINDER_REQUEST = "my reminder";
-    public static final String SHARED_PREFS = "shared reminder";
-
-    // SHARED PREFERENCE STORE VALUE OF THE SWITCH BUTTON FOR CURRENT USER
-    private final SharedPreferences sharedPref;
-
-    public NotificationsRepository(Context context) {
-        sharedPref =  context.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+    companion object {
+        const val REMINDER_REQUEST = "my reminder"
+        const val SHARED_PREFS = "shared reminder"
     }
 
-    public void switchNotification() {
-        if(!sharedPref.getBoolean(REMINDER_REQUEST, false)){
+    private var sharedPref: SharedPreferences =
+        context.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE)
 
-            sharedPref
-                    .edit()
-                    .putBoolean(REMINDER_REQUEST, true)
-                    .apply();
-        }else{
-            sharedPref
-                    .edit()
-                    .putBoolean(REMINDER_REQUEST, false)
-                    .apply();
-        }
+    fun isNotificationEnabledLiveData(): LiveData<Boolean> {
 
-    }
+        val mutableLiveData = MutableLiveData<Boolean>()
 
-    public LiveData<Boolean> isNotificationEnabledLiveData() {
-        MutableLiveData<Boolean> mutableLiveData = new MutableLiveData<>();
+        mutableLiveData.value =
+            sharedPref.getBoolean(REMINDER_REQUEST, false)
 
-        mutableLiveData.setValue(sharedPref.getBoolean(REMINDER_REQUEST, false));
-
-        sharedPref.registerOnSharedPreferenceChangeListener((sharedPreferences, key) -> {
-            if (key.equals(REMINDER_REQUEST)) {
-                mutableLiveData.setValue(sharedPreferences.getBoolean(key, false));
+        sharedPref.registerOnSharedPreferenceChangeListener { sharedPreferences: SharedPreferences, key: String ->
+            if (key == REMINDER_REQUEST) {
+                mutableLiveData.value = sharedPreferences.getBoolean(key, false)
             }
-        });
+        }
+        return mutableLiveData
+    }
 
-        return mutableLiveData;
+    fun switchNotification() {
+
+        if (!sharedPref.getBoolean(NotificationsRepository.REMINDER_REQUEST, false)) {
+            sharedPref
+                .edit()
+                .putBoolean(REMINDER_REQUEST, true)
+                .apply()
+        } else {
+            sharedPref
+                .edit()
+                .putBoolean(REMINDER_REQUEST, false)
+                .apply()
+        }
     }
 }

@@ -96,8 +96,8 @@ class MainActivityViewModel constructor(
 
     // RETRIEVE THE CURRENT USER RESTAURANT CHOICE
     fun getUserRestaurantChoice() {
-        val workmatesWhoMadeRestaurantChoiceLiveData: LiveData<List<UserWhoMadeRestaurantChoice?>> =
-            usersWhoMadeRestaurantChoiceRepository.workmatesWhoMadeRestaurantChoice
+        val workmatesWhoMadeRestaurantChoiceLiveData: LiveData<List<UserWhoMadeRestaurantChoice>> =
+            usersWhoMadeRestaurantChoiceRepository.getWorkmatesWhoMadeRestaurantChoice()
         mainActivityYourLunchViewStateMediatorLiveData.addSource(
             workmatesWhoMadeRestaurantChoiceLiveData
         ) { userWhoMadeRestaurantChoices ->
@@ -124,7 +124,7 @@ class MainActivityViewModel constructor(
         mainActivityYourLunchViewStateMediatorLiveData.value = yourLunch
     }
 
-    fun userSearch(predictionText: String?) {
+    fun userSearch(predictionText: String) {
         userSearchRepository.usersSearch(predictionText)
     }
 }

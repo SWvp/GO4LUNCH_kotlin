@@ -1,61 +1,54 @@
-package com.kardabel.go4lunch.domain.repository;
+package com.kardabel.go4lunch.domain.repository
 
-import android.util.Log;
+import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentChange
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.FirebaseFirestoreException
+import com.google.firebase.firestore.QuerySnapshot
+import com.kardabel.go4lunch.domain.model.UserModel
 
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
+class WorkmatesRepository {
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentChange;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.kardabel.go4lunch.domain.model.UserModel;
+    companion object {
+        const val USERS = "users"
+        const val USER_NAME = "userName"
+    }
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+    fun getWorkmates(): LiveData<List<UserModel>> {
 
-public class WorkmatesRepository {
+        val userId = FirebaseAuth.getInstance().currentUser!!.uid
+        val db = FirebaseFirestore.getInstance()
 
-    public static final String USERS = "users";
-    public static final String USER_NAME = "userName";
-
-    // GET WORKMATES FROM FIRESTORE DATABASE
-    public LiveData<List<UserModel>> getWorkmates() {
-
-        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-        MutableLiveData<List<UserModel>> userModelMutableLiveData = new MutableLiveData<>();
+        val userModelMutableLiveData = MutableLiveData<List<UserModel>>()
 
         // WITH SET, WE ENSURE THERE IS NO DUPLICATE, FOR EXAMPLE WHEN ANOTHER USER CHANGE NAME FIELD
-        Set<UserModel> workmates = new HashSet<>();
+        val workmates: MutableSet<UserModel> = HashSet()
 
         db.collection(USERS)
-                .orderBy(USER_NAME)
-                .addSnapshotListener((value, error) -> {
-
-                    if (error != null) {
-                        Log.e("Firestore error", error.getMessage());
-                        return;
-                    }
-                    assert value != null;
-                    for (DocumentChange document : value.getDocumentChanges()) {
-                        UserModel usermodel = document.getDocument().toObject(UserModel.class);
-
-                        if (!userId.equals(usermodel.getUid())) {
-                            if (document.getType() == DocumentChange.Type.ADDED ||
-                                    document.getType() == DocumentChange.Type.MODIFIED) {
-
-                                workmates.add(document.getDocument().toObject(UserModel.class));
-
-                            }
+            .orderBy(USER_NAME)
+            .addSnapshotListener { value: QuerySnapshot?, error: FirebaseFirestoreException? ->
+                if (error != null) {
+                    Log.e("Firestore error", error.message!!)
+                    return@addSnapshotListener
+                }
+                assert(value != null)
+                for (document in value!!.documentChanges) {
+                    val (uid) = document.document.toObject(UserModel::class.java)
+                    if (userId != uid) {
+                        if (document.type == DocumentChange.Type.ADDED ||
+                            document.type == DocumentChange.Type.MODIFIED
+                        ) {
+                            workmates.add(document.document.toObject(UserModel::class.java))
                         }
                     }
-                    List<UserModel> workmatesList = new ArrayList<>(workmates);
-                    userModelMutableLiveData.setValue(workmatesList);
-
-                });
-        return userModelMutableLiveData;
+                }
+                val workmatesList: List<UserModel> =
+                    ArrayList(workmates)
+                userModelMutableLiveData.setValue(workmatesList)
+            }
+        return userModelMutableLiveData
     }
 }
