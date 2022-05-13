@@ -45,8 +45,7 @@ class WorkmatesRepository {
                         }
                     }
                 }
-                val workmatesList: List<UserModel> =
-                    ArrayList(workmates)
+                val workmatesList: List<UserModel> = ArrayList(workmates)
                 userModelMutableLiveData.setValue(workmatesList)
             }
         return userModelMutableLiveData
