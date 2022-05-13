@@ -1,56 +1,50 @@
-package com.kardabel.go4lunch.domain.usecase;
+package com.kardabel.go4lunch.domain.usecase
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.android.gms.tasks.Task
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FirebaseFirestore
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+class ClickOnFavoriteRestaurantUseCase(
+    private val firebaseFirestore: FirebaseFirestore,
+) {
 
-public class ClickOnFavoriteRestaurantUseCase {
-
-    private final FirebaseFirestore firebaseFirestore;
-
-    public static final String COLLECTION_USERS = "users";
-    public static final String FAVORITE_RESTAURANTS = "favorite restaurants";
-    public static final String RESTAURANT_NAME = "restaurantName";
-    public static final String RESTAURANT_ID = "restaurantId";
-
-    public ClickOnFavoriteRestaurantUseCase(FirebaseFirestore firebaseFirestore) {
-        this.firebaseFirestore = firebaseFirestore;
-
+    companion object{
+        const val COLLECTION_USERS = "users"
+        const val FAVORITE_RESTAURANTS = "favorite restaurants"
+        const val RESTAURANT_NAME = "restaurantName"
+        const val RESTAURANT_ID = "restaurantId"
     }
 
-    public  CollectionReference getDayCollection() {
-        return firebaseFirestore.collection(COLLECTION_USERS);
-    }
+    fun onFavoriteRestaurantClick(
+        restaurantId: String,
+        restaurantName: String,
+    ){
 
-    // WHEN FAVORITE ICON FROM DETAIL VIEW IS CLICKED,
-    // ADD OR REMOVE THE RESTAURANT FROM THE LIST (DOCUMENT IN FIRESTORE) OF USER'S FAVORITE
-    public void onFavoriteRestaurantClick(
-            String restaurantId,
-            String restaurantName) {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
 
-        String userId = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
-
-        Map<String, Object> favoriteRestaurant = new HashMap<>();
-        favoriteRestaurant.put(RESTAURANT_ID, restaurantId);
-        favoriteRestaurant.put(RESTAURANT_NAME, restaurantName);
+        val favoriteRestaurant: MutableMap<String, Any> = HashMap()
+        favoriteRestaurant[RESTAURANT_ID] = restaurantId
+        favoriteRestaurant[RESTAURANT_NAME] = restaurantName
 
         getDayCollection()
-                .document(userId)
-                .collection(FAVORITE_RESTAURANTS)
-                .document(restaurantId)
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        if (task.getResult().exists()) {
-                            task.getResult().getReference().delete();
-                        } else {
-                            task.getResult().getReference().set(favoriteRestaurant);
-                        }
+            .document(userId!!)
+            .collection(ClickOnFavoriteRestaurantUseCase.FAVORITE_RESTAURANTS)
+            .document(restaurantId)
+            .get()
+            .addOnCompleteListener { task: Task<DocumentSnapshot> ->
+                if (task.isSuccessful) {
+                    if (task.result.exists()) {
+                        task.result.reference.delete()
+                    } else {
+                        task.result.reference.set(favoriteRestaurant)
                     }
-                });
+                }
+            }
+    }
+
+    private fun getDayCollection(): CollectionReference {
+        return firebaseFirestore.collection(ClickOnFavoriteRestaurantUseCase.COLLECTION_USERS)
     }
 }

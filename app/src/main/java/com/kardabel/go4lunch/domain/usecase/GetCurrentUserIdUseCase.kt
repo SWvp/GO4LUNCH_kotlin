@@ -1,10 +1,9 @@
-package com.kardabel.go4lunch.domain.usecase;
+package com.kardabel.go4lunch.domain.usecase
 
-import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuth
 
-public class GetCurrentUserIdUseCase {
-
-    public String invoke() {
-        return FirebaseAuth.getInstance().getCurrentUser().getUid();
+class GetCurrentUserIdUseCase {
+    operator fun invoke(): String {
+        return FirebaseAuth.getInstance().currentUser!!.uid
     }
 }

@@ -1,48 +1,43 @@
-package com.kardabel.go4lunch.domain.usecase;
+package com.kardabel.go4lunch.domain.usecase
 
-import android.app.Application;
+import android.app.Application
+import android.location.Location
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Transformations
+import com.kardabel.go4lunch.R
+import com.kardabel.go4lunch.domain.pojo.NearbySearchResults
+import com.kardabel.go4lunch.domain.pojo.Restaurant
+import com.kardabel.go4lunch.domain.repository.LocationRepository
+import com.kardabel.go4lunch.domain.repository.NearbySearchResponseRepository
 
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.Transformations;
+class GetNearbySearchResultsByIdUseCase(
+    private val locationRepository: LocationRepository,
+    private val nearbySearchResponseRepository: NearbySearchResponseRepository,
+    private val application: Application,
 
-import com.kardabel.go4lunch.R;
-import com.kardabel.go4lunch.domain.pojo.Restaurant;
-import com.kardabel.go4lunch.domain.repository.LocationRepository;
-import com.kardabel.go4lunch.domain.repository.NearbySearchResponseRepository;
+    ) {
 
-public class GetNearbySearchResultsByIdUseCase {
-
-    public static final String RESTAURANT = "restaurant";
-    private final LocationRepository locationRepository;
-    private final NearbySearchResponseRepository nearbySearchResponseRepository;
-    private final Application application;
-
-    // RETRIEVE NEARBY RESULTS FROM LOCATION
-    public GetNearbySearchResultsByIdUseCase(
-            LocationRepository locationRepository,
-            NearbySearchResponseRepository nearbySearchResponseRepository,
-            Application application) {
-
-        this.locationRepository = locationRepository;
-        this.nearbySearchResponseRepository = nearbySearchResponseRepository;
-        this.application = application;
+    companion object{
+        const val RESTAURANT = "restaurant"
     }
 
-    public LiveData<Restaurant> invoke(String placeId) {
-        return Transformations.switchMap(locationRepository.getLocationLiveData(), input -> {
-            String locationAsText = input.getLatitude() + "," + input.getLongitude();
-            return Transformations.map(nearbySearchResponseRepository.getRestaurantListLiveData(
+    fun invoke(placeId: String): LiveData<Restaurant> {
+
+        return Transformations.switchMap(locationRepository.getLocationLiveData()) { input: Location ->
+            val locationAsText =
+                input.latitude.toString() + "," + input.longitude
+            Transformations.map(
+                nearbySearchResponseRepository.getRestaurantListLiveData(
                     RESTAURANT,
                     locationAsText,
-                    application.getString(R.string.radius)),
-                    nearbySearchResults -> {
-                        for (Restaurant restaurant : nearbySearchResults.getResults()) {
-                            if (restaurant.getRestaurantId().equals(placeId)) {
-                                return restaurant;
-                            }
-                        }
-                        return null;
-                    });
-        });
+                    application.getString(R.string.radius))) { nearbySearchResults: NearbySearchResults? ->
+                for (restaurant in nearbySearchResults!!.results!!) {
+                    if (restaurant.restaurantId == placeId) {
+                        return@map restaurant
+                    }
+                }
+                null
+            }
+        }
     }
 }
