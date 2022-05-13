@@ -54,7 +54,7 @@ public class AuthenticationActivity extends BaseActivity<AuthenticationBinding> 
     private void setupListeners() {
         // Login/Profile Button
         binding.loginButton.setOnClickListener(view -> {
-            if (GetCurrentUserUseCase.invoke() != null) {
+            if (GetCurrentUserUseCase.Companion.getFirebaseAuth() != null) {
                 startProfileActivity();
             } else {
                 startSignInActivity();

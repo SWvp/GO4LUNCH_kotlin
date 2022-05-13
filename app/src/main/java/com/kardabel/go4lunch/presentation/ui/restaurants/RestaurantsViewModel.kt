@@ -34,9 +34,9 @@ class RestaurantsViewModel constructor(
 
     private var locationLiveData: LiveData<Location> = locationRepository.getLocationLiveData()
     private var nearbySearchResultsLiveData: LiveData<NearbySearchResults> =
-        getNearbySearchResultsUseCase.invoke()
+        getNearbySearchResultsUseCase.invoke
     private var restaurantsDetailsResultLiveData: LiveData<List<RestaurantDetailsResult>> =
-        getRestaurantDetailsResultsUseCase.invoke()
+        getRestaurantDetailsResultsUseCase.invoke
     private var workmatesWhoMadeRestaurantChoiceLiveData: LiveData<List<UserWhoMadeRestaurantChoice>> =
         usersWhoMadeRestaurantChoiceRepository.getWorkmatesWhoMadeRestaurantChoice()
     private var usersSearchLiveData: LiveData<String> = userSearchRepository.getUsersSearchLiveData()

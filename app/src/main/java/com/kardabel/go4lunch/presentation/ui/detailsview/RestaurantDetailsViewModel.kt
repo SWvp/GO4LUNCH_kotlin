@@ -41,7 +41,7 @@ class RestaurantDetailsViewModel constructor(
     fun init(placeId: String) {
         val restaurantLiveData: LiveData<Restaurant> =
             getNearbySearchResultsByIdUseCase.invoke(placeId)
-        val restaurantDetailsLiveData: LiveData<RestaurantDetailsResult> =
+        val restaurantDetailsLiveData: LiveData<RestaurantDetailsResult?> =
             getRestaurantDetailsResultsByIdUseCase.invoke(placeId)
         val workmatesWhoMadeRestaurantChoiceLiveData: LiveData<List<UserWhoMadeRestaurantChoice>> =
             usersWhoMadeRestaurantChoiceRepository.getWorkmatesWhoMadeRestaurantChoice()

@@ -24,7 +24,7 @@ class MapViewModel constructor(
     }
 
     private var locationLiveData: LiveData<Location> = locationRepository.getLocationLiveData()
-    private var nearbySearchResultsLiveData: LiveData<NearbySearchResults> = getNearbySearchResultsUseCase.invoke()
+    private var nearbySearchResultsLiveData: LiveData<NearbySearchResults> = getNearbySearchResultsUseCase.invoke
     private var workmatesWhoMadeRestaurantChoiceLiveData: LiveData<List<UserWhoMadeRestaurantChoice>> = usersWhoMadeRestaurantChoiceRepository.getWorkmatesWhoMadeRestaurantChoice()
     private var usersSearchLiveData: LiveData<String> = userSearchRepository.getUsersSearchLiveData()
 

@@ -1,24 +1,13 @@
-package com.kardabel.go4lunch.domain.usecase;
+package com.kardabel.go4lunch.domain.usecase
 
-import androidx.lifecycle.LiveData;
-
-import com.kardabel.go4lunch.domain.pojo.RestaurantDetailsResult;
-import com.kardabel.go4lunch.domain.repository.RestaurantDetailsResponseRepository;
-
-public class GetRestaurantDetailsResultsByIdUseCase {
-
-    private  final RestaurantDetailsResponseRepository restaurantDetailsResponseRepository;
-
-    public GetRestaurantDetailsResultsByIdUseCase(
-            RestaurantDetailsResponseRepository restaurantDetailsResponseRepository){
-
-        this.restaurantDetailsResponseRepository = restaurantDetailsResponseRepository;
-    }
+import androidx.lifecycle.LiveData
+import com.kardabel.go4lunch.domain.pojo.RestaurantDetailsResult
+import com.kardabel.go4lunch.domain.repository.RestaurantDetailsResponseRepository
 
 
-    public LiveData<RestaurantDetailsResult> invoke(String placeId) {
+class GetRestaurantDetailsResultsByIdUseCase(
+    private val restaurantDetailsResponseRepository: RestaurantDetailsResponseRepository
+) {
 
-        return restaurantDetailsResponseRepository.getRestaurantDetailsLiveData(placeId);
-
-    }
+    fun invoke(placeId: String): LiveData<RestaurantDetailsResult?> = restaurantDetailsResponseRepository.getRestaurantDetailsLiveData(placeId)
 }
