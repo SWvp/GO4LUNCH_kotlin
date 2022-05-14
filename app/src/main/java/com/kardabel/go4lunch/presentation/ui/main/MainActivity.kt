@@ -237,10 +237,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // GET SEARCHVIEW
         val searchView = menu.findItem(R.id.search).actionView as SearchView
         searchView.maxWidth = Int.MAX_VALUE
-        searchView.setBackgroundColor(Color.WHITE)
+        searchView.setBackgroundColor(Color.TRANSPARENT)
         val editText = searchView.findViewById<EditText>(androidx.appcompat.R.id.search_src_text)
-        editText.setTextColor(Color.BLACK)
-        editText.setHintTextColor(Color.GRAY)
+        editText.setTextColor(Color.WHITE)
+        editText.setHintTextColor(Color.LTGRAY)
 
         searchView.setIconifiedByDefault(false)
 

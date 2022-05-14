@@ -15,8 +15,8 @@ class LocationRepository {
 
     // CHANGE CONST TO ADAPT LOCATION REFRESH
     companion object {
-        const val DEFAULT_UPDATE_INTERVAL = 5000
-        const val FASTEST_UPDATE_INTERVAL = 2000
+        const val DEFAULT_UPDATE_INTERVAL = 50000
+        const val FASTEST_UPDATE_INTERVAL = 20000
     }
     private val locationMutableLiveData = MutableLiveData<Location>()
     private var callback: LocationCallback? = null

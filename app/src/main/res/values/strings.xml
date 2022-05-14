@@ -12,8 +12,8 @@
     <string name="channel_description">Notification push</string>
 
     <!-- USED IN BOTTOM NAV VIEW -->
-    <string name="title_mapview">Map View</string>
-    <string name="title_listview">List View</string>
+    <string name="title_mapview">Map</string>
+    <string name="title_listview">Restaurants</string>
     <string name="title_workmates">Workmates</string>
 
     <!-- USED IN DRAWER MENU-->
