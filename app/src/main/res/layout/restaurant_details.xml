@@ -53,8 +53,8 @@
                 android:id="@+id/details_restaurant_info"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-
                 android:background="@color/orange"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
@@ -66,9 +66,13 @@
                     android:layout_marginTop="8dp"
                     android:ellipsize="end"
                     android:maxLines="1"
+                    android:singleLine="false"
+                    android:soundEffectsEnabled="false"
                     android:text="@string/restaurant_name"
+                    android:textAllCaps="true"
                     android:textColor="@color/white"
-                    android:textSize="18sp"
+                    android:textIsSelectable="true"
+                    android:textSize="20sp"
                     android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -78,11 +82,11 @@
                     style="?android:attr/ratingBarStyleSmall"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
                     android:layout_marginTop="4dp"
+                    android:layout_marginStart="4dp"
                     android:numStars="3"
                     android:theme="@style/AppThemeRatingBar"
-                    app:layout_constraintStart_toEndOf="@id/detail_restaurant_name"
+                    app:layout_constraintStart_toEndOf="@+id/detail_restaurant_name"
                     app:layout_constraintTop_toTopOf="@+id/detail_restaurant_name" />
 
                 <TextView
@@ -91,6 +95,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:layout_marginBottom="20dp"
+                    android:layout_marginTop="4dp"
                     android:text="@string/restaurant_address"
                     android:textColor="@color/white"
                     android:textSize="12sp"
@@ -109,7 +114,7 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:text="@string/call_button"
-                android:textColor="@color/orange"
+                android:textColor="@color/orange_variant"
                 app:drawableTopCompat="@drawable/call_icon"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/details_restaurant_info" />
@@ -131,7 +136,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/favorite_button"
-                android:textColor="@color/orange"
+                android:textColor="@color/orange_variant"
 
                 app:layout_constraintBottom_toBottomOf="@id/call_icon"
                 app:layout_constraintEnd_toEndOf="@+id/detail_like_button"
@@ -144,7 +149,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="48dp"
                 android:text="@string/web_icon"
-                android:textColor="@color/orange"
+                android:textColor="@color/orange_variant"
                 app:layout_constraintBottom_toBottomOf="@+id/call_icon"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@id/call_icon"
@@ -152,13 +157,20 @@
                 android:clickable="true"
                 android:focusable="true" />
 
+            <com.google.android.material.divider.MaterialDivider
+                android:id="@+id/divider"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="16sp"
+                app:layout_constraintTop_toBottomOf="@+id/call_icon" />
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/detail_recyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior"
-                app:layout_constraintTop_toBottomOf="@+id/call_icon"
+                app:layout_constraintTop_toBottomOf="@+id/divider"
                 tools:listitem="@layout/item_workmate"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>

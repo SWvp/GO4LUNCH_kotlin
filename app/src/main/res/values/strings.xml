@@ -84,7 +84,7 @@
     <string name="call_button">CALL</string>
     <string name="restaurant_name">Restaurant name</string>
     <string name="restaurant_address">Restaurant address</string>
-    <string name="web_icon">Web</string>
+    <string name="web_icon">WEB</string>
     <string name="details_picture">Restaurant picture</string>
     <string name="details_chose_button">Chose restaurant button</string>
     <string name="details_favorite_button">Favorite button</string>
@@ -107,7 +107,7 @@
 
     <!-- PHOTO URL -->
     <string name="api_url">https://maps.googleapis.com/maps/api/place/</string>
-    <string name="photo_reference">photo?maxwidth=300&amp;photo_reference=</string>
+    <string name="photo_reference">photo?maxheight=1450&amp;maxwidth=1450&amp;photo_reference=</string>
     <string name="and_key">&amp;key=</string>
 
     <!-- WORKMATES VIEW MODEL -->

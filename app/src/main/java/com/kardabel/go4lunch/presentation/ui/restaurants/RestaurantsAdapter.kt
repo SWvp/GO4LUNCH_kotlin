@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.Priority
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.kardabel.go4lunch.R
 
 class RestaurantsAdapter(
@@ -52,7 +53,10 @@ class RestaurantsAdapter(
             Glide
                 .with(photo.context)
                 .load(restaurantsViewState.photo)
+                .override(600, 600)
                 //.error(R.drawable.no_photo_available_yet)
+                .centerCrop()
+                .transition(DrawableTransitionOptions.withCrossFade())
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .priority(Priority.HIGH)
                 .into(photo)

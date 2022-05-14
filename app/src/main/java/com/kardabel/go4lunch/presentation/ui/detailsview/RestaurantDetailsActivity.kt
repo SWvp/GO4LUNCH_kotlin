@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.kardabel.go4lunch.R
 import com.kardabel.go4lunch.databinding.RestaurantDetailsBinding
 import com.kardabel.go4lunch.di.ViewModelFactory
@@ -75,6 +76,7 @@ class RestaurantDetailsActivity : AppCompatActivity() {
             binding.detailRestaurantAddress.text = details.detailsRestaurantAddress
             Glide.with(binding.detailPicture.context)
                 .load(details.detailsPhoto)
+                .transition(DrawableTransitionOptions.withCrossFade())
                 .into(binding.detailPicture)
             binding.detailsRating.rating = details.rating.toFloat()
             binding.choseRestaurantButton.setImageResource(details.choseRestaurantButton)
